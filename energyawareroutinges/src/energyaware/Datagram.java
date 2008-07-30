@@ -13,10 +13,16 @@ import java.util.ArrayList;
  */
 public class Datagram {
 	
-	public String type;							// The type of this datagram
-	public NodeID source;						// The source address of this datagram
-	public NodeID destination;					// The destination address for this datagram
-	public List<NodeID> path;					// A list of Node IDs that represents the path for this datagram
+	public static final String RREQ = "RREQ";	// Represents a RREQ message type
+	public static final String RREP = "RREP";	// Represents a RREP message type
+	public static final String ERRE = "ERRE";	// Represents a ERRE message type
+	public static final String UNINIT = "NA";	// Represents an uninitialized message type
+	private static final int NONE = -1;			// Used for default constructor values
+	
+	private String type;						// The type of this datagram
+	private int source;							// The source address of this datagram
+	private int destination;					// The destination address for this datagram
+	private List<Integer> path;					// A list of Node IDs that represents the path for this datagram
 	private List<Integer> batteryMetricValues;	// A list of battery metric values for storing new battery metrics that are encountered
 	
 	/**
@@ -25,9 +31,9 @@ public class Datagram {
 	public Datagram() {
 		
 		type = "None";
-		source = "None";
-		destination = "None";
-		path = new ArrayList<String>();
+		source = NONE;
+		destination = NONE;
+		path = new ArrayList<Integer>();
 		batteryMetricValues = new ArrayList<Integer>();
 	}
 	
@@ -39,19 +45,29 @@ public class Datagram {
 	 * @param pDestination The Datagram's destination address.
 	 * @param pPath The Datagram's specified path to follow.
 	 */
-	public Datagram( String pType, String pSource, String pDestination, List<String> pPath ) {
+	public Datagram( String pType, int pSource, int pDestination, List<Integer> pPath ) {
 		
 		type = pType;
 		source = pSource;
 		destination = pDestination;
 		path = pPath;
-		batteryMetricValues = new ArrayList<Integer>( pPath.size() );
+		batteryMetricValues = new ArrayList<Integer>();
 	}
 	
 	/**
-	 * Sets the datagram's type.
+	 * Get the type field.
 	 * 
-	 * @param pType The datagram's type.
+	 * @return The type
+	 */
+	public String getType() {
+		
+		return type;
+	}
+	
+	/**
+	 * Set the type field.
+	 * 
+	 * @param pType A type.
 	 */
 	public void setType( String pType ) {
 		
@@ -59,12 +75,99 @@ public class Datagram {
 	}
 	
 	/**
-	 * Gets the datagram's type.
-	 * 
-	 * @return The datagram's type.
+	 * Get the source field
+	 *
+	 * @return The Source
 	 */
-	public String getType() {
+	public int getSource() {
+	
+		return source;
+	}
+	
+	/**
+	 * Set the source id.
+	 * 
+	 * @param pSource A source id.
+	 */
+	public void setSource( int pSource ) {
 		
-		return type;
+		source = pSource;
+	}
+	
+	/**
+	 * Get the destination node id.
+	 * 
+	 * @return The destination node id.
+	 */
+	public int getDestination() {
+		
+		return destination;
+	}
+	
+	/**
+	 * Set the destination node id.
+	 * 
+	 * @param pDestination A destination node id.
+	 */
+	public void setDestination( int pDestination ) {
+		
+		destination = pDestination;
+	}
+	
+	/**
+	 * Get the path of node ids.
+	 * 
+	 * @return The path.
+	 */
+	public List<Integer> getPath() {
+		
+		return path;
+	}
+	
+	/**
+	 * Set a new path of node ids.
+	 * 
+	 * @param pPath A path of node ids.
+	 */
+	public void setPath( List<Integer> pPath ) {
+	
+		path = pPath;
+	}
+	/**
+	 * Get the list of battery metrics.
+	 * 
+	 * @return The list of battery metrics.
+	 */
+	public List<Integer> getBatteryMetricValues() {
+		
+		return batteryMetricValues;
+	}
+	
+	/**
+	 * Set the list of battery metrics.
+	 * 
+	 * @param pBatteryMetricValues The battery metric values.
+	 */
+	public void setBatteryMetricValues( List<Integer> pBatteryMetricValues ) {
+		
+		batteryMetricValues = pBatteryMetricValues;
+	}
+	
+	/**
+	 * Takes a list and reverses the order of its elements.
+	 * 
+	 * @param incoming A list that needs to be reversed
+	 * @return A list in the reverse order of the incoming
+	 */
+	public static List<Integer> reverse( List<Integer> incoming ) {
+	
+		// An empty incoming list will result in an empty outgoing list
+		ArrayList<Integer> output = new ArrayList<Integer>( incoming.size() );
+    	
+    	for( Integer i : incoming ) {
+    		output.add( i );
+    	}
+
+    	return output;
 	}
 }

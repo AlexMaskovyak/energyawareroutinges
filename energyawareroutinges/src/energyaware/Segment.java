@@ -11,7 +11,7 @@ package energyaware;
 public class Segment {
 	
 	private Message message;		// The pay load of this Segment
-	private String destination;	// The requested Node ID for this Segment
+	private String destination;		// The requested Node ID for this Segment
 	
 	/**
 	 * Default constructor
