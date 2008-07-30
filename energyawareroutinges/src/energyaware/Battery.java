@@ -1,13 +1,65 @@
 package energyaware;
 
+/**
+ * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
+ * @version July 2008
+ *
+ * A battery is the storage object for our power.  A battery knows of its capacity and current level.
+ */
 public class Battery {
 
-		public int mPowerLevel;
-		public int mMaxCapacity;
+		private int level;		// The current level of the battery 
+		private int capacity;	// The full capabilities of the battery
 	
-		public Battery( int pInitialLevel, int pMaxCapacity ) {
+		/**
+		 * Create a new battery object.
+		 * 
+		 * @param pLevel
+		 * @param pCapacity
+		 */
+		public Battery( int pLevel, int pCapacity ) {
 			
-			mPowerLevel = pInitialLevel;
-			mMaxCapacity = pMaxCapacity;
+			level = pLevel;
+			capacity = pCapacity;
+		}
+		
+		/**
+		 * Get the battery's capacity.
+		 * 
+		 * @return The capacity.
+		 */
+		public int getCapacity() {
+			
+			return capacity;
+		}
+		
+		/**
+		 * Set the battery's capacity.
+		 * 
+		 * @param pCapacity A battery capacity.
+		 */
+		public void setCapacity( int pCapacity ) {
+			
+			capacity = pCapacity;
+		}
+		
+		/**
+		 * Get the battery's current power level.
+		 * 
+		 * @return The current power level.
+		 */
+		public int getLevel() {
+			
+			return level;
+		}
+		
+		/**
+		 * Set the battery's current power level.
+		 * 
+		 * @param A battery power level.
+		 */
+		public void setLevel( int pLevel ) {
+			
+			level = pLevel;
 		}
 }
