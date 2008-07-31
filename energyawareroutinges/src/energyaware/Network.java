@@ -1,13 +1,10 @@
 package energyaware;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 
 /**
  * The network object abstracts out the physical transmission medium as well as
