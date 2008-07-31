@@ -44,8 +44,8 @@ public class Agent {
 			// Load the pricing rules
 			engine.batch("rules.clp");
 
-			Datagram d = new Datagram("RREQ", -1, 2, null, -1);
-			Datagram e = new Datagram("RREP", 1, -2, null, -1);
+			Datagram d = new Datagram("RREQ", -1, 2, new Segment(), null, -1);
+			Datagram e = new Datagram("RREP", 1, -2, new Segment(), null, -1);
 			engine.add(d);
 			engine.add(e);
 

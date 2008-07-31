@@ -31,6 +31,10 @@
 
 ;	(add (new Datagram "RREP" id.id incoming.source (call Datagram.reverse( incoming.path ) ) )))
 
+
+
+;(printout t (call Datagram reverse( list 1 2 3 4)) crlf)
+
 (defglobal ?*arrayList* = (new java.util.ArrayList))
 (call ?*arrayList* add 1)
 (call ?*arrayList* add 2)
@@ -44,6 +48,7 @@
 ;(printout t (call Datagram reverse ?*arrayList* ) crlf)
 
 (printout t (call ?*arrayList* get 0) crlf)
+
 
 ;(defrule Checkdest
 ;    (Datagram (type ?t:(= ?t 10)))

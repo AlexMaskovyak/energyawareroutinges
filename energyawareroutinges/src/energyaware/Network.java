@@ -239,6 +239,7 @@ public class Network {
 				Datagram.UNINIT, 
 				Datagram.NONE,
 				Datagram.NONE,
+				new Segment(),
 				pFrame.getDatagram().getPath(),
 				Datagram.NONE);
 		Frame frame = new Frame(RERRDatagram);
