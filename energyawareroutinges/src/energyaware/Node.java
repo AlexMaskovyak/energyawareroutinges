@@ -37,4 +37,21 @@ public class Node implements TrafficGenerator {
 		
 		agent = pAgent;
 	}
+	
+	
+	/**
+	 * Receive a datagram from another node on the network.
+	 * @param pDatagram Datagram received.
+	 */
+	public void receiveDatagram(Datagram pDatagram) {
+		
+	}
+	
+	/**
+	 * Returns the NodeID assigned to this Node.
+	 * @return This Node's NodeID.
+	 */
+	public int getID() {
+		return -1;
+	}
 }
