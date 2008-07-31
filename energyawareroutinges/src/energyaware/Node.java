@@ -8,40 +8,54 @@ package energyaware;
  */
 public class Node implements TrafficGenerator {
 
-	private Agent agent;	// The agent "protocol" that handles communication processing at the node.
+	private Agent agent;		// The agent "protocol" that handles communication processing at the node.
+	private Battery battery;	// controls how long we can transmit and receive messages
 	private int ID;
-	private Network network;
+	private Network network;	// our connection to the network
+	
 	
 	/**
 	 * Default constructor creates a new Node
 	 */
 	public Node() {
-		
 		agent = new Agent();
 	}
 	
 	/**
 	 * Gets the agent working at this node.
-	 * 
 	 * @return The agent.
 	 */
 	public Agent getAgent() {
-		
 		return agent;
 	}
 	
 	/**
 	 * Set the agent to work at this node.
-	 * 
 	 * @param pAgent An agent.
 	 */
 	public void setAgent( Agent pAgent ) {
-		
 		agent = pAgent;
 	}
 	
 	
 	/**
+	 * Get the battery installed in this node.
+	 * @return Battery installed in this node.
+	 */
+	public Battery getBattery() {
+		return battery;
+	}
+	
+	/**
+	 * Install a battery into this node.
+	 * @param pBattery Battery to install into this node.
+	 */
+	public void setBattery(Battery pBattery) {
+		battery = pBattery;
+	}
+	
+	/**
+	 * 
 	 * Returns this Node's network ID.
 	 * @return This Node's assigned network ID.
 	 */
@@ -56,6 +70,25 @@ public class Node implements TrafficGenerator {
 	public void setID(int pID) {
 		ID = pID;
 	}
+	
+	
+	/**
+	 * Get a reference to the network to which this Node belongs.
+	 * @return Reference to the network.
+	 */
+	public Network getNetwork() {
+		return network;
+	}
+	
+	/**
+	 * Set the reference to the network to which this Node belongs.
+	 * @param pNetwork Reference to network with which we belong/communicate.
+	 */
+	public void setNetwork(Network pNetwork) {
+		network = pNetwork;
+	}
+	
+	
 	
 	public void run() {
 	}
@@ -77,10 +110,13 @@ public class Node implements TrafficGenerator {
 	
 	/**
 	 * Send the frame to the network.
-	 * @param pFrame
+	 * @param pFrame Frame to broadcast onto the network.
+	 * @param pTransmissionDistance Transmission distance which affects the 
+	 * 			amount of power we use to send this frame.
 	 */
-	public void sendFrame(Frame pFrame) {
-		network.broadcast(this, pFrame, 10);
+	public void sendFrame(Frame pFrame, int pTransmissionDistance) {
+		/*** THIS NEEDS TO REDUCE OUR BATTERY LEVEL ***/
+		network.broadcast(this, pFrame, pTransmissionDistance);
 	}
 	
 	

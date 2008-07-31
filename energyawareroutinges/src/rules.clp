@@ -1,13 +1,11 @@
 ; Declare all objects that are defined by Java
 (import energyaware.*)
 
-(deftemplate Segment(declare(from-class Segment)))
-(deftemplate Node(declare(from-class Node)))
-(deftemplate Battery(declare(from-class Battery)))
-(deftemplate BatteryMetric( declare(from-class BatteryMetric)))
-(deftemplate Agent( declare(from-class Agent)))
-(deftemplate Message( declare(from-class Message)))
-(deftemplate Datagram( declare(from-class Datagram)))
+(deftemplate Agent 			( declare( from-class Agent )))
+(deftemplate Battery 		( declare( from-class Battery )))
+(deftemplate BatteryMetric 	( declare( from-class BatteryMetric )))
+(deftemplate Datagram		( declare( from-class Datagram )))
+(deftemplate Segment		( declare( from-class Segment )))
 
 ; We need to get our JEss code to run a java static method and give us an output object
 
