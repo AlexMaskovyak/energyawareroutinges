@@ -72,8 +72,7 @@ public class Agent {
 	
 	
 	/**
-	 * Obtain a frame from the datalink layer (network).  Strip out the 
-	 * datagram and give it to JESS.
+	 * Obtain a frame from the datalink layer (network).
 	 * @param pFram frame received from datalink layer. 
 	 */
 	public void receiveFrame(Frame pFrame) {
@@ -81,8 +80,7 @@ public class Agent {
 	}
 	
 	/**
-	 * Sends the datagram up the stack to this node's "transport layer".  Strip
-	 * out the segment and give it to the transport layer.
+	 * Sends the datagram up the stack to this node's "transport layer".
 	 * @param pDatagram
 	 */
 	public void sendDatagramUpStack(Datagram pDatagram) {
@@ -99,8 +97,7 @@ public class Agent {
 	}
 	
 	/**
-	 * Obtain a segment from the transport layer (node).  Encapsulate this in
-	 * a datagram and give it to JESS.
+	 * Obtain a segment from the transport layer (node).
 	 * @param pSegment 
 	 */
 	public void receiveSegment(Segment pSegment) {
