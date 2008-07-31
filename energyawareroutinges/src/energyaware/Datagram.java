@@ -159,16 +159,24 @@ public class Datagram {
 	 * @param incoming A list that needs to be reversed
 	 * @return A list in the reverse order of the incoming
 	 */
-	public static void /*List<Integer> */ reverse( ArrayList<Integer> incoming ) {
-	
+	public static List<Integer> reverse( ArrayList<Integer> incoming ) {
+		// obtain size of list
+		int size = incoming.size();
+		
 		// An empty incoming list will result in an empty outgoing list
-		ArrayList<Integer> output = new ArrayList<Integer>( incoming.size() );
+		ArrayList<Integer> output = new ArrayList<Integer>( size );
     	
-    	for( Integer i : incoming ) {
-    		output.add( i );
+    	for( int i = 0; i < size; ++i) {
+    		output.add(i, incoming.get(size - 1 - i));
     	}
 
-    	//return output;
+    	for(int i : output) {
+    		System.out.print(i + " ");
+    	}
+    	System.out.println();
+    	System.out.println("reverse was run");
+    	
+    	return output;
 	}
 
 	public static void run() {}
