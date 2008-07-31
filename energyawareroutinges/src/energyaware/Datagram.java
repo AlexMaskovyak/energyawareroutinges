@@ -137,6 +137,21 @@ public class Datagram {
 	
 		path = pPath;
 	}
+	
+	/**
+	 * Set the segment 
+	 */
+	public Segment getSegment() {
+		return segment;
+	}
+	
+	/**
+	 * Get the segment
+	 */
+	public void setSegment( Segment pSegment ) {
+		segment = pSegment;
+	}
+	
 	/**
 	 * Get the list of battery metrics.
 	 * 
