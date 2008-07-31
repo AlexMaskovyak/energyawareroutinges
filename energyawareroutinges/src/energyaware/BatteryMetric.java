@@ -17,10 +17,6 @@ public class BatteryMetric {
 	 */
 	public static int calculateBatteryMetric( Battery pBattery ) {
 		
-		int metric = 0;
-		
-		
-		
-		return metric;
+		return -1;
 	}
 }

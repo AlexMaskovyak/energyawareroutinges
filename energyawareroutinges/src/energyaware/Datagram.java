@@ -15,9 +15,9 @@ public class Datagram {
 	
 	public static final String RREQ = "RREQ";	// Represents a RREQ message type
 	public static final String RREP = "RREP";	// Represents a RREP message type
-	public static final String ERRE = "ERRE";	// Represents a ERRE message type
+	public static final String RERR = "RERR";	// Represents a RRER message type
 	public static final String UNINIT = "NA";	// Represents an uninitialized message type
-	private static final int NONE = -1;			// Used for default constructor values
+	public static final int NONE = -1;			// Used for default constructor values
 	
 	private String type;						// The type of this datagram
 	private int source;							// The source address of this datagram
@@ -30,7 +30,7 @@ public class Datagram {
 	 */
 	public Datagram() {
 		
-		type = "None";
+		type = Datagram.UNINIT;
 		source = NONE;
 		destination = NONE;
 		path = new ArrayList<Integer>();
@@ -45,13 +45,13 @@ public class Datagram {
 	 * @param pDestination The Datagram's destination address.
 	 * @param pPath The Datagram's specified path to follow.
 	 */
-	public Datagram( String pType, int pSource, int pDestination, List<Integer> pPath ) {
-		
+	public Datagram( String pType, int pSource, int pDestination, List<Integer> pPath, int batteryMetric ) {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
 		path = pPath;
 		batteryMetricValues = new ArrayList<Integer>();
+		batteryMetricValues.add(batteryMetric);
 	}
 	
 	/**

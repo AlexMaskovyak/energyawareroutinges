@@ -21,7 +21,7 @@ public class Main {
 		catch( JessException error ) {
 			
 			System.out.println("Error!");
-			
+			error.printStackTrace();
 		}
 	}
 	
