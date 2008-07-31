@@ -89,6 +89,9 @@ public class Network {
 	public Node addNode(Node pNode, Point pPoint) {
 		geography.put(pNode, pPoint);
 		nodes.add(pNode);
+		
+		pNode.setNetwork(this);
+		
 		return pNode;
 	}
 	
@@ -189,11 +192,15 @@ public class Network {
 	
 	/**
 	 * Connects a node to the network topology, allowing it to both send and 
-	 * receive messages to other nodes.
+	 * receive messages to other nodes.  If the node does not belong to the
+	 * geography, then it is added first.
 	 * @param pNode Node to connect to the topology.
 	 */
 	public void connect(Node pNode) {
-		if (nodes.contains(pNode) && !connectedNodes.contains(pNode)) {
+		if (!nodes.contains(pNode)) {
+			addNode(pNode);
+		}
+		if (!connectedNodes.contains(pNode)) {	
 			connectedNodes.add(pNode);
 		}
 	}

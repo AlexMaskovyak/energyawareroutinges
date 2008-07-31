@@ -113,13 +113,15 @@ public class Agent {
 	 * layer's operations are simulated by this method with the help of 
 	 * "network".
 	 * @param pDatagram Datagram to send out.
+	 * @param pTransmissionDistance Distance to send this packet which
+	 * 			influences energy expenditure.
 	 */
-	public void sendDatagram(Datagram pDatagram) {
+	public void sendDatagram(Datagram pDatagram, int pTransmissionDistance) {
 		// encapsulate into frame for the datalink operation
 		Frame frame = new Frame(pDatagram);
 		
 		// send it to the node
-		ourNode.sendFrame(frame);
+		ourNode.sendFrame(frame, pTransmissionDistance);
 	}
 	
 	/**
