@@ -69,4 +69,42 @@ public class Agent {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/**
+	 * Obtain a frame from the datalink layer (network).  Strip out the 
+	 * datagram and give it to JESS.
+	 * @param pFram frame received from datalink layer. 
+	 */
+	public void receiveFrame(Frame pFrame) {
+		
+	}
+	
+	/**
+	 * Sends the datagram up the stack to this node's "transport layer".  Strip
+	 * out the segment and give it to the transport layer.
+	 * @param pDatagram
+	 */
+	public void sendDatagramUpStack(Datagram pDatagram) {
+		
+	}
+	
+	/**
+	 * Sends the datagram down the stack to this node's datalink layer,
+	 * which encapsulates it in a frame and sends it out to the network.
+	 * @param pDatagram
+	 */
+	public void sendDatagramDownStack(Datagram pDatagram) {
+		
+	}
+	
+	/**
+	 * Obtain a segment from the transport layer (node).  Encapsulate this in
+	 * a datagram and give it to JESS.
+	 * @param pSegment 
+	 */
+	public void receiveSegment(Segment pSegment) {
+		
+	}
+	
 }
