@@ -3,7 +3,8 @@
 ;; it just tells Jess to examine the classes and set up templates
 ;; using their properties
 
-(import gov.sandia.jess.example.pricing.model.*)
+;(import gov.sandia.jess.example.pricing.model.*)
+(import energyaware.*)
 (deftemplate Order       (declare (from-class Order)))
 (deftemplate OrderItem   (declare (from-class OrderItem)))
 (deftemplate CatalogItem (declare (from-class CatalogItem)))

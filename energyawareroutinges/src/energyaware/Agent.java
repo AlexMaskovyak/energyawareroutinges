@@ -10,7 +10,7 @@ import java.util.List;
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  * @version July 2008
  * 
- *          An agent has the communication processing protocol.
+ * An agent has the communication processing protocol.
  */
 public class Agent {
 
@@ -44,12 +44,13 @@ public class Agent {
 			// Load the pricing rules
 			engine.batch("rules.clp");
 
-			Datagram d = new Datagram("RREQ", -1, 2, new Segment(), null, -1);
-			Datagram e = new Datagram("RREP", 1, -2, new Segment(), null, -1);
+			Datagram d = new Datagram("RREQ", -1, 2, new Segment(), getList(), 3);
+			Datagram e = new Datagram("RREP", 1, -2, new Segment(), getList(), 3);
 			engine.add(d);
 			engine.add(e);
 
 			engine.assertString("(ourid (id 2))");
+			engine.add( this );
 			for (Iterator it = engine.listFacts(); it.hasNext();) {
 				System.out.println(it.next());
 			}
@@ -71,6 +72,15 @@ public class Agent {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private ArrayList<Integer> getList() {
+		ArrayList <Integer> a = new ArrayList<Integer>();
+		a.add( 0 );
+		a.add( 1 );
+		a.add( 2 );
+		a.add( 3 );
+		return a;
 	}
 	
 	
