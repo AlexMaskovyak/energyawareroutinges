@@ -9,6 +9,7 @@ package energyaware;
 public class Node implements TrafficGenerator {
 
 	private Agent agent;	// The agent "protocol" that handles communication processing at the node.
+	private int ID;
 	
 	/**
 	 * Default constructor creates a new Node
@@ -38,6 +39,23 @@ public class Node implements TrafficGenerator {
 		agent = pAgent;
 	}
 	
+	
+	/**
+	 * Returns this Node's network ID.
+	 * @return This Node's assigned network ID.
+	 */
+	public int getID() {
+		return ID;
+	}
+	
+	/**
+	 * Sets this Node's network ID.
+	 * @param pID Network ID to assign to this Node.
+	 */
+	public void setID(int pID) {
+		ID = pID;
+	}
+	
 	public void run() {
 	}
 	
@@ -52,13 +70,5 @@ public class Node implements TrafficGenerator {
 	 */
 	public void receiveFrame(Frame pFrame) {
 		
-	}
-	
-	/**
-	 * Returns the NodeID assigned to this Node.
-	 * @return This Node's NodeID.
-	 */
-	public int getID() {
-		return -1;
 	}
 }
