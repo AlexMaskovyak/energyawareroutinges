@@ -10,6 +10,7 @@ public class Node implements TrafficGenerator {
 
 	private Agent agent;	// The agent "protocol" that handles communication processing at the node.
 	private int ID;
+	private Network network;
 	
 	/**
 	 * Default constructor creates a new Node
@@ -64,11 +65,40 @@ public class Node implements TrafficGenerator {
 	}
 	
 	
+	/// hooks for the datalink layer and the network object
 	/**
-	 * Receive a datagram from another node on the network.
+	 * Receive a from another node on the network.  This simulates the datalink
+	 * layer.
 	 * @param pDatagram Datagram received.
 	 */
 	public void receiveFrame(Frame pFrame) {
-		
+		agent.receiveDatagram(pFrame.getDatagram());
+	}
+	
+	/**
+	 * Send the frame to the network.
+	 * @param pFrame
+	 */
+	public void sendFrame(Frame pFrame) {
+		network.broadcast(this, pFrame, 10);
+	}
+	
+	
+	/**
+	 * Receive a message from the stack and pass to the "application."
+	 * @param pMessage Message with a message we basically ignore.
+	 */
+	public void receiveMessage(Message pMessage) {
+		// NO-OP, we don't care about getting the message since we don't really
+		// have any sort of application to send it to.
+	}
+	
+	/**
+	 * Send a message into the Agent to send out.
+	 * @param pMessage message to send
+	 * @param pDestinationID id of destination
+	 */
+	public void sendMessage(Message pMessage, int pDestinationNodeID) {
+		agent.receiveMessage(pMessage, pDestinationNodeID);
 	}
 }

@@ -11,7 +11,7 @@ package energyaware;
 public class Segment {
 	
 	private Message message;		// The pay load of this Segment
-	private String destination;		// The requested Node ID for this Segment
+	private int destination;		// The requested Node ID for this Segment
 	
 	/**
 	 * Default constructor
@@ -19,7 +19,7 @@ public class Segment {
 	public Segment() {
 		
 		message = null;
-		destination = null;
+		destination = -1;
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class Segment {
 	 * @param pMessage The datagram's pay load.
 	 * @param pDestination The datagram's requested destination.
 	 */
-	public Segment( Message pMessage, String pDestination ) {
+	public Segment( Message pMessage, int pDestination ) {
 		
 		message = pMessage;
 		destination = pDestination;
@@ -59,7 +59,7 @@ public class Segment {
 	 * 
 	 * @return The segment's destination.
 	 */
-	public String getDestination() {
+	public int getDestination() {
 		
 		return destination;
 	}
@@ -69,7 +69,7 @@ public class Segment {
 	 * 
 	 * @param pDestination A new destination for this segment.
 	 */
-	public void setDestination( String pDestination ) {
+	public void setDestination( int pDestination ) {
 		
 		destination = pDestination;
 	}

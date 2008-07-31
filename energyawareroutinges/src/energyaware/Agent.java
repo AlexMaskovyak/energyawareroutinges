@@ -16,7 +16,10 @@ public class Agent {
 
 	private Rete engine;
 	private WorkingMemoryMarker marker;
-
+	
+	private Node ourNode;
+	
+	
 	// private Database database;
 
 	// TEST STUB METHOD
@@ -71,37 +74,66 @@ public class Agent {
 	}
 	
 	
+	/// agent has to receive messages from node
+	/// agent has to send message to node
+	
+	/// agent has to receive frames from node
+	/// agent has to send
+	
 	/**
-	 * Obtain a frame from the datalink layer (network).
-	 * @param pFram frame received from datalink layer. 
+	 * Obtain a segment from up in the transport layer.  This segment is to be
+	 * passed to JESS.
+	 * @param pMessage Segment from the application layer.
+	 * @param pDestinationNodeID Destination to receive this message 
 	 */
-	public void receiveFrame(Frame pFrame) {
+	public void receiveMessage(Message pMessage, int pDestinationNodeID) {
+		// encapsulate into segment for transport layer 
+		Segment segment = new Segment(pMessage, pDestinationNodeID);
 		
+		// give this to JESS the network layer
+		try {
+			engine.add(segment);
+		}
+		catch ( JessException je ) {
+			je.printStackTrace();
+		}
 	}
 	
 	/**
-	 * Sends the datagram up the stack to this node's "transport layer".
-	 * @param pDatagram
+	 * Sends a segment up to the transport layer.  This layer's operations are
+	 * simulated completely by this method.
+	 * @param pSegment to the transport layer.
 	 */
-	public void sendDatagramUpStack(Datagram pDatagram) {
-		
+	public void sendMessage(Message pMessage) {
+		ourNode.receiveMessage(pMessage);
 	}
 	
 	/**
-	 * Sends the datagram down the stack to this node's datalink layer,
-	 * which encapsulates it in a frame and sends it out to the network.
-	 * @param pDatagram
+	 * Sends the datagram down the stack to this node's datalink layer.  This
+	 * layer's operations are simulated by this method with the help of 
+	 * "network".
+	 * @param pDatagram Datagram to send out.
 	 */
-	public void sendDatagramDownStack(Datagram pDatagram) {
+	public void sendDatagram(Datagram pDatagram) {
+		// encapsulate into frame for the datalink operation
+		Frame frame = new Frame(pDatagram);
 		
+		// send it to the node
+		ourNode.sendFrame(frame);
 	}
 	
 	/**
-	 * Obtain a segment from the transport layer (node).
-	 * @param pSegment 
+	 * Obtain a datagram from down in the datalink layer.  This datagram is 
+	 * passed to JESS.
+	 * @param pDatagram Datagram received from the datalink layer. 
 	 */
-	public void receiveSegment(Segment pSegment) {
-		
+	public void receiveDatagram(Datagram pDatagram) {
+		try {
+			engine.add(pDatagram);
+		} 
+		catch ( JessException je ) {
+			je.printStackTrace();
+		}
 	}
 	
 }
