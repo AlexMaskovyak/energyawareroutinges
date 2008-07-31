@@ -17,7 +17,6 @@ public class BatteryMetric {
 	 */
 	public static int calculateBatteryMetric( Battery pBattery ) {
 		
-<<<<<<< .mine
 		double level = pBattery.level;
 		double max = pBattery.capacity;
 		
@@ -40,8 +39,5 @@ public class BatteryMetric {
 		}
 
 		return 5; // Returned if there is less than 25% left of the battery
-=======
-		return -1;
->>>>>>> .r18
 	}
 }

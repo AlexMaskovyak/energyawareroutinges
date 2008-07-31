@@ -37,7 +37,6 @@ public class Node implements TrafficGenerator {
 		
 		agent = pAgent;
 	}
-<<<<<<< .mine
 	
 	public void run() {
 	}
@@ -45,14 +44,13 @@ public class Node implements TrafficGenerator {
 	public void stop() {
 		
 	}
-=======
 	
 	
 	/**
 	 * Receive a datagram from another node on the network.
 	 * @param pDatagram Datagram received.
 	 */
-	public void receiveDatagram(Datagram pDatagram) {
+	public void receiveFrame(Frame pFrame) {
 		
 	}
 	
@@ -63,5 +61,4 @@ public class Node implements TrafficGenerator {
 	public int getID() {
 		return -1;
 	}
->>>>>>> .r18
 }
