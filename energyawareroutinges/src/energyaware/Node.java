@@ -37,6 +37,15 @@ public class Node implements TrafficGenerator {
 		
 		agent = pAgent;
 	}
+<<<<<<< .mine
+	
+	public void run() {
+	}
+	
+	public void stop() {
+		
+	}
+=======
 	
 	
 	/**
@@ -54,4 +63,5 @@ public class Node implements TrafficGenerator {
 	public int getID() {
 		return -1;
 	}
+>>>>>>> .r18
 }

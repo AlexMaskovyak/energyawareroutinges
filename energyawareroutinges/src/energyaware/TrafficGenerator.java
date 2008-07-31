@@ -25,4 +25,14 @@ public interface TrafficGenerator {
 	 * @param pAgent An agent.
 	 */
 	public void setAgent( Agent pAgent );
+	
+	/**
+	 * Starts processing for new traffic.
+	 */
+	public void run();
+	
+	/**
+	 * Stops processing for new traffic.
+	 */
+	public void stop();
 }
