@@ -22,6 +22,7 @@ public class Datagram {
 	private String type;						// The type of this datagram
 	private int source;							// The source address of this datagram
 	private int destination;					// The destination address for this datagram
+	private Segment segment;					// The paylod of this datagram
 	private List<Integer> path;					// A list of Node IDs that represents the path for this datagram
 	private List<Integer> batteryMetricValues;	// A list of battery metric values for storing new battery metrics that are encountered
 	
@@ -33,6 +34,7 @@ public class Datagram {
 		type = Datagram.UNINIT;
 		source = NONE;
 		destination = NONE;
+		segment = new Segment();
 		path = new ArrayList<Integer>();
 		batteryMetricValues = new ArrayList<Integer>();
 	}
@@ -42,10 +44,12 @@ public class Datagram {
 	 * 
 	 * @param pType The Datagram's type.
 	 * @param pSource The Datagram's source address.
+	 * @param pSegment The payload for this datagram.
 	 * @param pDestination The Datagram's destination address.
 	 * @param pPath The Datagram's specified path to follow.
+	 * @param pBatteryMetric The battery metric for this node.
 	 */
-	public Datagram( String pType, int pSource, int pDestination, List<Integer> pPath, int batteryMetric ) {
+	public Datagram( String pType, int pSource, int pDestination, Segment pSegment, List<Integer> pPath, int batteryMetric ) {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
