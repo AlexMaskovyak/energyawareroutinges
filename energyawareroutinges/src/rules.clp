@@ -32,7 +32,7 @@
     (printout t "Rule 1 Works" crlf))
 ;	(add (new Datagram "RREP" id.id incoming.source (call Datagram.reverse( incoming.path ) ) )))
 
-(printout t (call Datagram reverse( list 1 2 3 4)) crlf)
+;(printout t (call Datagram reverse( list 1 2 3 4)) crlf)
 ;(defrule Checkdest
 ;    (Datagram (type ?t:(= ?t 10)))
 ;    =>

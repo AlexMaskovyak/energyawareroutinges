@@ -15,7 +15,7 @@ import java.awt.geom.Point2D;
  * 
  * Network is responsible for keeping track of all nodes on the network, which
  * nodes are connected, and which nodes are disconnected.  Network determines
- * which nodes receive datagrams that are broadcast from a source node based
+ * which nodes receive frames that are broadcast from a source node based
  * upon distance. 
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  *
@@ -96,24 +96,23 @@ public class Network {
 	}
 	
 	/**
-	 * Broadcasts the datagram to all connected nodes within receiving distance
+	 * Broadcasts the frame to all connected nodes within receiving distance
 	 * of the source broadcaster.
-	 * @param pSourceNode Source of the broadcast.
-	 * @param pDatagram Datagram to send to those within range.
+	 * @param pSourceNode Node that is broadcasting on the network.
+	 * @param pFrame Frame to send to those within range.
 	 * @param pTransmissionDistance Distance that is reached by the strength of
 	 * 			the signal.
 	 */
 	public void broadcast (
-			Node pSourceNode, Datagram pDatagram, int pTransmissionDistance) {
+			Node pSourceNode, Frame pFrame, int pTransmissionDistance) {
 		// get the position of the source
 		Point source = geography.get(pSourceNode);
 		
 		// set RERR determiner
 		boolean nextHopReached = false;
 		
-		// inspect the path to get the next hop
-		List<Integer> path = pDatagram.getPath();
-		int nextHopID = path.get(1);
+		// frames store the next hop
+		int nextHopID = pFrame.getDestination();
 		
 		// go through all of the nodes in the network
 		for (Node node : connectedNodes) {
@@ -128,7 +127,7 @@ public class Network {
 					pTransmissionDistance, maxTransmissionDistance);
 			
 			if (source.distance(potentialDestination)<=pTransmissionDistance) {
-				node.receiveDatagram(pDatagram);
+				node.receiveFrame(pFrame);
 				
 				// determine whether we got to the next hop
 				if (node.getID() == nextHopID) {
@@ -138,8 +137,8 @@ public class Network {
 		}
 		
 		// determine whether to send a RERR
-		if (!nextHopReached) {
-			this.sendRERRDatagram(pSourceNode, path);
+		if (!nextHopReached) {	
+			this.sendRERRDatagramBackToFrameSource(pSourceNode, pFrame);
 		}
 	}
 	
@@ -225,18 +224,22 @@ public class Network {
 	/**
 	 * Models the datalink layer responsibility of sending a RERR datagram
 	 * to a source node when the datagram's next hop is not reachable.
-	 * @param pDestinationNode
+	 * @param pSourceNode Source to receive this frame.
+	 * @param pFrame Frame with contact and path information.
 	 */
-	public void sendRERRDatagram(Node pSourceNode, List<Integer> path) {
+	public void sendRERRDatagramBackToFrameSource(
+			Node pSourceNode, Frame pFrame) {
+		
 		Datagram RERRDatagram = 
 			new Datagram(
 				Datagram.UNINIT, 
 				Datagram.NONE,
 				Datagram.NONE,
-				path,
+				pFrame.getDatagram().getPath(),
 				Datagram.NONE);
+		Frame frame = new Frame(RERRDatagram);
 		
-		pSourceNode.receiveDatagram(RERRDatagram);
+		pSourceNode.receiveFrame(frame);
 	}
 	
 	public static void main (String[] args) {
