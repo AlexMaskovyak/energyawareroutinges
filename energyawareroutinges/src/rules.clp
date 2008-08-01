@@ -7,41 +7,45 @@
 (deftemplate Datagram		( declare( from-class Datagram )))
 (deftemplate Segment		( declare( from-class Segment )))
 
-
-; Everything under between this line &
-(bind ?meth Datagram.getInstance)
-; This line is for testing...
-
 ; We need to get our JEss code to run a java static method and give us an output object
 
-(deftemplate ourid(slot id))
+(defglobal ?*id* = 1)
+(defglobal ?*agent* = 1)
+(defrule setAgent
+    ?a <- (Agent)
+    =>
+    ;(?*id* (call ?*agent*.ID intValue))
+    (bind ?*agent* ?a)
+    (bind ?*id* ?*agent*.ID intValue)
+    (printout t "SetAgent worked. My id is " ?*id* " bitchz." crlf))
 
 ; Our listing of protocol rules
-(defrule Test
-    (Datagram (type ?t&: (= ?t "RREQ")))
-    =>
-    (printout t "RREQ Datagrams" crlf))
+;(defrule Test
+;    (Datagram (type ?t&: (= ?t "RREQ")))
+;    =>
+;    (printout t "RREQ Datagrams" crlf))
 
-(defrule Test2
-    (Datagram (type ?t&: (= ?t "RREP")))
-    =>
-    (printout t "RREP Datagrams" crlf))
+;(defrule Test2
+;    (Datagram (type ?t&: (= ?t "RREP")))
+;    =>
+;    (printout t "RREP Datagrams" crlf))
  
 (defrule RREQtoRREP
     "A RREQ arrives at the destination and a RREP is sent back."
-    ?id <- (ourid)
-    ?incoming <- (Datagram {type == "RREQ"}{destination == id.id})
+    ;(Datagram(myid ?pumpkin))
+    ?incoming <- (Datagram {type == "RREQ"}{destination == ?*id*})
+    ;?incoming <- (Datagram (or (type ?t&: (= ?t "RREQ"))(destination ?d&: (= ?d ?*id*)))) ;{destination == ?*id*})
+    ;?incoming <- (Datagram {type == "RREQ"}(destination ?dest))
+    ;(test (= ?dest ?*id*))
+    
     =>
-    ;(bind ?mmw ?incoming.path)
+    (printout t "Well- src: " ?incoming.source " dst: " ?incoming.destination crlf)
     (bind ?revpath (call Datagram reverse ?incoming.path))
-    ;(new Datagram "RREP" 1 4 ?incoming.segment ?revpath 4)
     (bind ?response(new Datagram "RREP" 1 4 ?incoming.segment ?revpath 4))
-    (call )
     (printout t "RREQ-RREP Fired" crlf))
     
     ;(bind ?response (call Datagram reverse ?path))
 
-(defrule )
 
 (run)
 (facts)
