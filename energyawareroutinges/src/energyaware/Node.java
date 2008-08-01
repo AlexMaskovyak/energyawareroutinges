@@ -1,12 +1,14 @@
 package energyaware;
 
+import jess.JessException;
+
 /**
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  * @version July 2008
  * 
  * A Node represents a system.  Virtually a "computer".
  */
-public class Node implements TrafficGenerator {
+public class Node {
 
 	private Agent agent;		// The agent "protocol" that handles communication processing at the node.
 	private Battery battery;	// controls how long we can transmit and receive messages
@@ -17,8 +19,31 @@ public class Node implements TrafficGenerator {
 	/**
 	 * Default constructor creates a new Node
 	 */
-	public Node() {
-		agent = new Agent();
+	private Node() {
+		this( (int)(100 * Math.random()) );
+	}
+	
+	/**
+	 * Constructor that takes parameters in case you never saw Java before
+	 */
+	private Node( int pId ) {
+		ID = pId;
+	}
+	
+	public static Node getInstance( int pId ) {
+		
+		Node node = null;
+		
+		try {
+			node = new Node( pId );
+			Agent agent = new Agent();
+		
+			node.setAgent( agent );
+			agent.setNode( node );
+		}
+		catch( JessException e ) {}
+		
+		return node;
 	}
 	
 	/**

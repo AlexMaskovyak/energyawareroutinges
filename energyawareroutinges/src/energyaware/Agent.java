@@ -12,21 +12,15 @@ import java.util.List;
  * 
  * An agent has the communication processing protocol.
  */
-public class Agent {
+public class Agent{
 
 	private Rete engine;
 	private WorkingMemoryMarker marker;
 	
-	private Node ourNode;
+	private Node node;
 	
 	
 	// private Database database;
-
-	// TEST STUB METHOD
-	public static void main(String[] args) {
-		System.out.println("In main");
-		new Agent();
-	}
 
 	/**
 	 * Default agent constructor.
@@ -35,7 +29,6 @@ public class Agent {
 
 		// Database aDatabase
 		try {
-			System.out.println("YES");
 
 			// Create a Jess rule engine
 			engine = new Rete();
@@ -43,24 +36,6 @@ public class Agent {
 
 			// Load the pricing rules
 			engine.batch("rules.clp");
-
-			Datagram d = new Datagram("RREQ", -1, 2, new Segment(), getList(), 3);
-			Datagram e = new Datagram("RREP", 1, -2, new Segment(), getList(), 3);
-			engine.add(d);
-			engine.add(e);
-
-			engine.assertString("(ourid (id 2))");
-			engine.add( this );
-			for (Iterator it = engine.listFacts(); it.hasNext();) {
-				System.out.println(it.next());
-			}
-
-			ArrayList<Integer> a = new ArrayList<Integer>();
-			a.add(1);
-			a.add(2);
-			a.add(3);
-
-			engine.add(a);
 
 			engine.run();
 			// Load the catalog data into working memory
@@ -74,15 +49,14 @@ public class Agent {
 		}
 	}
 	
-	private ArrayList<Integer> getList() {
-		ArrayList <Integer> a = new ArrayList<Integer>();
-		a.add( 0 );
-		a.add( 1 );
-		a.add( 2 );
-		a.add( 3 );
-		return a;
+	/**
+	 * 
+	 */
+	public void setNode( Node pNode ) throws JessException {
+		
+		node = pNode;
+		engine.add( this );
 	}
-	
 	
 	/// agent has to receive messages from node
 	/// agent has to send message to node
@@ -103,6 +77,7 @@ public class Agent {
 		// give this to JESS the network layer
 		try {
 			engine.add(segment);
+			engine.run();
 		}
 		catch ( JessException je ) {
 			je.printStackTrace();
@@ -115,7 +90,7 @@ public class Agent {
 	 * @param pSegment to the transport layer.
 	 */
 	public void sendMessage(Message pMessage) {
-		ourNode.receiveMessage(pMessage);
+		node.receiveMessage(pMessage);
 	}
 	
 	/**
@@ -131,7 +106,7 @@ public class Agent {
 		Frame frame = new Frame(pDatagram);
 		
 		// send it to the node
-		ourNode.sendFrame(frame, pTransmissionDistance);
+		node.sendFrame(frame, pTransmissionDistance);
 	}
 	
 	/**
@@ -142,10 +117,31 @@ public class Agent {
 	public void receiveDatagram(Datagram pDatagram) {
 		try {
 			engine.add(pDatagram);
+			engine.run();
+			
+			
+//			for (Iterator it = engine.listFacts(); it.hasNext();) {
+//				System.out.println(it.next());
+//			}
+//			for( Iterator it = engine.listDefglobals(); it.hasNext(); ) {
+//				System.out.println( it.next() );
+//			}
 		} 
 		catch ( JessException je ) {
 			je.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Yep you guessed it.  Get the ID
+	 * @return take a guess
+	 */
+	public int getID() {
+		
+		return node.getID();
+	}
+	
+	public void setID( int pId ) {
+		
+	}
 }
