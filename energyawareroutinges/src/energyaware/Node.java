@@ -141,7 +141,10 @@ public class Node {
 	 */
 	public void sendFrame(Frame pFrame, int pTransmissionDistance) {
 		/*** THIS NEEDS TO REDUCE OUR BATTERY LEVEL ***/
-		network.broadcast(this, pFrame, pTransmissionDistance);
+		if (network != null) {
+			network.broadcast(this, pFrame, pTransmissionDistance);
+		}
+		System.out.println("Sending frame...");
 	}
 	
 	

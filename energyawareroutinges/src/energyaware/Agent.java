@@ -56,6 +56,8 @@ public class Agent{
 		
 		node = pNode;
 		engine.add( this );
+		engine.run();
+		//engine.add( new NodeID( 789 ) );
 	}
 	
 	/// agent has to receive messages from node
@@ -120,9 +122,9 @@ public class Agent{
 			engine.run();
 			
 			
-//			for (Iterator it = engine.listFacts(); it.hasNext();) {
-//				System.out.println(it.next());
-//			}
+			for (Iterator it = engine.listFacts(); it.hasNext();) {
+				System.out.println(it.next());
+			}
 //			for( Iterator it = engine.listDefglobals(); it.hasNext(); ) {
 //				System.out.println( it.next() );
 //			}

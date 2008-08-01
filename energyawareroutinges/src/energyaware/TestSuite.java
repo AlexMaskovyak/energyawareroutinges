@@ -22,6 +22,8 @@ public class TestSuite {
 //		Frame frame2 = new Frame( dg2 );
 		
 		node.receiveFrame(frame1);
+		
+		
 //		node.receiveFrame(frame2);
 	}
 	
@@ -52,7 +54,7 @@ public class TestSuite {
 		if( BatteryMetric.calculateBatteryMetric(bat) == 5 )
 			return "PASS";
 		
-		return "FAIL";
+		return "JFAIL";
 	}
 	
 	// Test a full battery
