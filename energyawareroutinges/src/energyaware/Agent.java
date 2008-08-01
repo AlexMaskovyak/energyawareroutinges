@@ -56,8 +56,13 @@ public class Agent{
 		
 		node = pNode;
 		engine.add( this );
+<<<<<<< .mine
+		
+		engine.run();
+=======
 		engine.run();
 		//engine.add( new NodeID( 789 ) );
+>>>>>>> .r31
 	}
 	
 	/// agent has to receive messages from node
