@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Random;
 import java.awt.Point;
 
+import jess.JessException;
+
 /**
  * The network object abstracts out the physical transmission medium as well as
  * some aspects of the datalink layer.
@@ -26,6 +28,7 @@ public class Network {
 	private ArrayList<Node> nodes;
 	private ArrayList<Node> connectedNodes;
 	private Map <Node, Point> geography;
+	private int nodeCount = 0;
 	
 	private Random generator;
 	
@@ -63,7 +66,8 @@ public class Network {
 	 * @return A reference to the Node added.
 	 */
 	public Node addNode() {
-		return addNode(new Node());
+
+		return addNode( Node.getInstance( nodeCount++ ));
 	}
 	
 	/**

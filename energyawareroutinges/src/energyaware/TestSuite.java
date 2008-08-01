@@ -1,5 +1,8 @@
 package energyaware;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  * @version July 2008
@@ -10,7 +13,25 @@ public class TestSuite {
 
 	public static void main( String [] args ) {
 		
-		new TestSuite();
+		Node node = Node.getInstance( 789 );
+		
+		Datagram dg1 = new Datagram("RREQ", 1, 789, new Segment(), makeList(), 3);
+//		Datagram dg2 = new Datagram("RREP", 2, -2, new Segment(), makeList(), 3);
+		
+		Frame frame1 = new Frame( dg1 );
+//		Frame frame2 = new Frame( dg2 );
+		
+		node.receiveFrame(frame1);
+//		node.receiveFrame(frame2);
+	}
+	
+	private static ArrayList<Integer> makeList() {
+		ArrayList <Integer> a = new ArrayList<Integer>();
+		a.add( 0 );
+		a.add( 1 );
+		a.add( 2 );
+		a.add( 3 );
+		return a;
 	}
 	
 	public TestSuite() {
