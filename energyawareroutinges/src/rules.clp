@@ -28,12 +28,12 @@
 
 (deffunction updateBatteryMetrics (?path ?metrics)
     "Updates the metrics related with another node"
-    (?*agent* updateBatteryMetrics ?metrics)
+    (?*agent* updateBatteryMetrics ?path ?metrics)
     )
 
 (deffunction updateTransmissionCosts (?path ?tcosts)
     "Updates the transmission cost to a node"
-    (?*agent updateTransmissionCosts ?path ?tcosts)
+    (?*agent* updateTransmissionCosts ?path ?tcosts)
     )
 
 (deffunction getPath (?destination)

@@ -23,8 +23,9 @@ public class TestSuite {
 		
 		try {
 			
-		System.out.println( "TEST 1:\t"); TestRuleInit1();
-		System.out.println( "TEST 2:\t" ); TestRuleUniversal1();
+		System.out.printf( "TEST 1:\n%s\n%s\n%s \n", "-----", TestRuleInit1(), "-----");
+		System.out.printf( "TEST 2:\n%s\n%s\n%s \n", "-----", TestRuleUniversal1(), "-----");
+		
 //		System.out.println( "TEST 3:\t" + TestRule3() );
 //		System.out.println( "TEST 4:\t" + Test4() );
 //		System.out.println( "TEST 5:\t" + Test5() );
@@ -42,7 +43,8 @@ public class TestSuite {
 	 */
 	
 	// 
-	public void TestRuleInit1() throws JessException {
+	public String TestRuleInit1() throws JessException {
+		StringBuilder results = new StringBuilder();
 		
 		Node node1 = Node.getInstance( 1 );
 		
@@ -55,8 +57,7 @@ public class TestSuite {
 		Object ob = val.javaObjectValue( context );
 		
 		if( node1.getAgent() != ob ) {
-			
-			System.out.println("TRI1: Agent assigned");
+			results.append("TRI1: Agent assigned\n");
 		}
 		
 		dg = engine.findDefglobal("*id*");
@@ -64,11 +65,15 @@ public class TestSuite {
 		ob = val.javaObjectValue(context);
 		
 		if( ((Integer) ob ).intValue() == 1 && ((Integer) ob).intValue() == node1.getID() ) {
-			System.out.println("TRI1: ID assigned");
+			results.append("TRI1: ID assigned\n");
 		}
+		
+		return results.toString();
 	}
 	
-	public void TestRuleUniversal1() throws JessException {
+	public String TestRuleUniversal1() throws JessException {
+		StringBuilder results = new StringBuilder();
+		
 		int source = 1;
 		int middle = 2;
 		int destination = 3;
@@ -111,12 +116,12 @@ public class TestSuite {
 		
 		// make sure we have a datagram in there
 		if ( engine.containsObject( dg ) ) {
-			System.out.println( "UR1: Datagram inserted properly." );
+			results.append( "UR1: Datagram inserted properly.\n" );
 		}
 		
 		// check our path
 		if ( agent.hasPath( path ) ) {
-			System.out.println( "UR1: Path succesfully added to table." );
+			results.append( "UR1: Path succesfully added to table.\n" );
 		}
 		
 		// check battery metrics
@@ -127,7 +132,7 @@ public class TestSuite {
 			}
 		}
 		if ( batteryOK ) {
-			System.out.println( "UR1: Battery metrics successfully added." );
+			results.append( "UR1: Battery metrics successfully added.\n" );
 		}
 		
 		// check our transmission cost
@@ -138,15 +143,20 @@ public class TestSuite {
 			int origCost = transmissionCosts.get( i );
 				
 			if (agentsCost != origCost) {
+				System.out.printf("agentsCost: %d origCost: %d\n", agentsCost, origCost);
 				transCostOK = false;
 			}
 		}
 		
 		if ( transCostOK ) {
-			System.out.println( "UR1: Transmission metrics successfully added. " );
+			results.append( "UR1: Transmission metrics successfully added.\n" );
 		}
+		
+		return results.toString();
 	}
 
+	
+	
 	/**
 	 * 
 	 * @param integers
