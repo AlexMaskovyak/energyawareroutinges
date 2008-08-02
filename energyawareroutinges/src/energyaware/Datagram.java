@@ -52,6 +52,7 @@ public class Datagram {
 		segment = new Segment();
 		path = new ArrayList<Integer>();
 		batteryMetricValues = new ArrayList<Integer>();
+		transmissionValues = new ArrayList<Integer>();
 	}
 	
 	/**
@@ -71,7 +72,9 @@ public class Datagram {
 		path = pPath;
 		batteryMetricValues = new ArrayList<Integer>();
 		batteryMetricValues.add(batteryMetric);
+		transmissionValues = new ArrayList<Integer>();
 	}
+		
 	
 	/**
 	 * Get the type field.

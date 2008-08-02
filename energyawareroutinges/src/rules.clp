@@ -67,27 +67,31 @@
 ; Rule 1: Given a RREQ (request), we want to send a RREP (Replay)
 (defrule RREQtoRREP
     "Tested: A RREQ Datagram arrives at the destination and a RREP Datagram is sent back."
-    ?incoming <- (Datagram {type == "RREQ"} {destination == ?*id*})
+    (Datagram {type == "RREQ"} {destination == ?*id*} (OBJECT ?incoming))
     =>
-    (printout t "Well- src: " ?incoming.source " dst: " ?incoming.destination crlf)
     (?incoming addToPath ?*id*)
+
     (bind ?revpath (call Datagram reverse ?incoming.path))
+
     (?incoming clearBatteryMetricValues)
     (?incoming addBatteryMetricValue (getBatteryMetric))
-    ;(bind ?revBattMetric (call Datagram reverse ?incoming.batteryMetrics))
+
     (bind ?response (
             new Datagram 
             	"RREP" 
             	?*id* 
             	?incoming.source 
-            	?incoming.segment 
+            	?incoming.segment
             	?revpath 
-            	(?incoming getBatteryMetricValues))
-            	)
-    (retract ?incoming)
+            	(getBatteryMetric)
+            	))
+
+    (undefinstance ?incoming)
     (?*agent* sendDatagram ?response 10)
     (printout t "RREQ-RREP Fired" crlf))
 
+    
+    
 ; Rule 2: Given any Datagram, we want to extract the battery metric, path & transmission cost
 (defrule ExtractTransmissionCost
     "Extracts the Battery Metric, Path & Transmission Cost from a datagram."
