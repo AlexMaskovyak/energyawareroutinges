@@ -16,15 +16,18 @@ public class Datagram {
 	public static final String RREQ = "RREQ";	// Represents a RREQ message type
 	public static final String RREP = "RREP";	// Represents a RREP message type
 	public static final String RERR = "RERR";	// Represents a RRER message type
+	public static final String DATA = "DATA";	// Represents normal data
 	public static final String UNINIT = "NA";	// Represents an uninitialized message type
 	public static final int NONE = -1;			// Used for default constructor values
 	
 	private String type;						// The type of this datagram
 	private int source;							// The source address of this datagram
 	private int destination;					// The destination address for this datagram
-	private Segment segment;					// The paylod of this datagram
+	private int rreqID;							// The semi-unique id value (Math.Randint)
+	private Segment segment;					// The payload of this datagram
 	private List<Integer> path;					// A list of Node IDs that represents the path for this datagram
 	private List<Integer> batteryMetricValues;	// A list of battery metric values for storing new battery metrics that are encountered
+	private List<Integer> transmissionValues;	// A minimum transmission value or distance cost
 	
 	/**
 	 * Default constructor.
@@ -138,6 +141,12 @@ public class Datagram {
 		path = pPath;
 	}
 	
+	// Appends a node id for the path
+	public void addToPath( int pNodeID ) {
+		
+		path.add( pNodeID );
+	}
+	
 	/**
 	 * Set the segment 
 	 */
@@ -172,6 +181,18 @@ public class Datagram {
 		batteryMetricValues = pBatteryMetricValues;
 	}
 	
+	// Append a battery metric value
+	public void addBatteryMetricValue( int pBatteryMetric ) {
+		
+		batteryMetricValues.add( pBatteryMetric );
+	}
+	/**
+	 * Clears the battery metrics
+	 */
+	public void clearBatteryMetricValues(){
+		batteryMetricValues.clear();
+	}
+	
 	/**
 	 * Takes a list and reverses the order of its elements.
 	 * 
@@ -197,6 +218,28 @@ public class Datagram {
     	
     	return output;
 	}
-
+	
+	public List<Integer> getTransmissionValues() {
+		return transmissionValues;
+	}
+	
+	public void setTransmissionValues( List<Integer> pValues ) {
+		
+		transmissionValues = pValues;
+	}
+	
+	public void addTransmissionCost( int pTransmissionValue ) {
+		
+		transmissionValues.add( pTransmissionValue );
+	}
+	
+	public int getRreqID() {
+		return rreqID;
+	}
+	
+	public void setRreqID( int pRreqID ) {
+		rreqID = pRreqID;
+	}
+	
 	public static void run() {}
 }

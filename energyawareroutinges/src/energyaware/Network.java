@@ -131,7 +131,7 @@ public class Network {
 					pTransmissionDistance, maxTransmissionDistance);
 			
 			if (source.distance(potentialDestination)<=pTransmissionDistance) {
-				node.receiveFrame(pFrame);
+				node.receiveFrame(pFrame, pTransmissionDistance);
 				
 				// determine whether we got to the next hop
 				if (node.getID() == nextHopID) {
@@ -248,7 +248,7 @@ public class Network {
 				Datagram.NONE);
 		Frame frame = new Frame(RERRDatagram);
 		
-		pSourceNode.receiveFrame(frame);
+		pSourceNode.receiveFrame(frame, 0);
 	}
 	
 	public static void main (String[] args) {

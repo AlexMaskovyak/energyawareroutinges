@@ -59,8 +59,6 @@ public class Agent{
 
 		engine.run();
 
-		//engine.add( new NodeID( 789 ) );
-
 	}
 	
 	/// agent has to receive messages from node
@@ -90,12 +88,14 @@ public class Agent{
 	}
 	
 	/**
-	 * Sends a segment up to the transport layer.  This layer's operations are
-	 * simulated completely by this method.
+	 * Takes a segment and simulates the transport layer.  This layer's operations 
+	 * are simulated completely by this method.  It strips out the message from
+	 * the segment.
 	 * @param pSegment to the transport layer.
 	 */
-	public void sendMessage(Message pMessage) {
-		node.receiveMessage(pMessage);
+	public void sendMessage(Segment pSegment) {
+		Message message = pSegment.getMessage();
+		node.receiveMessage(message);
 	}
 	
 	/**
@@ -119,11 +119,16 @@ public class Agent{
 	 * passed to JESS.
 	 * @param pDatagram Datagram received from the datalink layer. 
 	 */
-	public void receiveDatagram(Datagram pDatagram) {
+	public void receiveDatagram(Datagram pDatagram, int pTransmissionCost ) {
+		
+		if( pDatagram.getType().equals( "RREQ" ) ) {
+			
+			pDatagram.addTransmissionCost( pTransmissionCost );
+		}
+		
 		try {
 			engine.add(pDatagram);
 			engine.run();
-			
 			
 			for (Iterator it = engine.listFacts(); it.hasNext();) {
 				System.out.println(it.next());
@@ -148,5 +153,11 @@ public class Agent{
 	
 	public void setID( int pId ) {
 		
+	}
+	
+	public int getBatteryMetric() {
+		
+		return BatteryMetric.calculateBatteryMetric(
+				node.getBattery() );
 	}
 }
