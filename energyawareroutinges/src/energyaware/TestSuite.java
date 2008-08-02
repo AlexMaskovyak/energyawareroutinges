@@ -3,6 +3,7 @@ package energyaware;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
+import jess.*;
 
 /**
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
@@ -13,6 +14,102 @@ import java.util.Iterator;
 public class TestSuite {
 
 	public static void main( String [] args ) {
+		new TestSuite();
+	}
+	
+	public TestSuite() {
+		
+		try {
+			
+		System.out.println( "TEST 1:\t"); TestRuleInit1();
+		System.out.println( "TEST 2:\t" ); TestUniversalRule1();
+//		System.out.println( "TEST 3:\t" + TestRule3() );
+//		System.out.println( "TEST 4:\t" + Test4() );
+//		System.out.println( "TEST 5:\t" + Test5() );
+//		System.out.println( "TEST 6:\t" + Test6() );
+//		System.out.println( "TEST 7:\t" + Test7() );
+		}
+		catch( JessException e ) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * ========== A listing of Test conditions for our JESS rules =========
+	 */
+	
+	// 
+	public void TestRuleInit1() throws JessException {
+		
+		Node node1 = Node.getInstance( 1 );
+		
+		Rete engine = node1.getAgent().getEngine();
+		Context context = engine.getGlobalContext();
+		
+		Defglobal dg = engine.findDefglobal("*agent*");
+		Value val = dg.getInitializationValue();
+		
+		Object ob = val.javaObjectValue( context );
+		
+		if( node1.getAgent() != ob ) {
+			
+			System.out.println("TRI1: Agent assigned");
+		}
+		
+		dg = engine.findDefglobal("*id*");
+		val = dg.getInitializationValue();
+		ob = val.javaObjectValue(context);
+		
+		if( ((Integer) ob ).intValue() == 1 && ((Integer) ob).intValue() == node1.getID() ) {
+			System.out.println("TRI1: ID assigned");
+		}
+	}
+	
+	public void TestUniversalRule1() throws JessException {
+		
+		Node node1 = Node.getInstance( 1 );
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/*
+	public static void TestN() {
+		
 		Network network = Network.getInstance();
 		
 		Node node1 = Node.getInstance( 1 );
@@ -44,19 +141,8 @@ public class TestSuite {
 		return a;
 	}
 	
-	public TestSuite() {
-		
-		System.out.println( "TEST 1:\t" + Test1() );
-		System.out.println( "TEST 2:\t" + Test2() );
-		System.out.println( "TEST 3:\t" + Test3() );
-		System.out.println( "TEST 4:\t" + Test4() );
-		System.out.println( "TEST 5:\t" + Test5() );
-		System.out.println( "TEST 6:\t" + Test6() );
-		System.out.println( "TEST 7:\t" + Test7() );
-	}
-	
 	// Test an empty battery
-	private String Test1() {
+	private String Testb1() {
 	
 		Battery bat = new Battery(0, 200);
 		if( BatteryMetric.calculateBatteryMetric(bat) == 5 )
@@ -66,7 +152,7 @@ public class TestSuite {
 	}
 	
 	// Test a full battery
-	private String Test2() {
+	private String Testb2() {
 	
 		Battery bat = new Battery( 150, 150 );
 		if( BatteryMetric.calculateBatteryMetric( bat ) == 1 )
@@ -75,16 +161,12 @@ public class TestSuite {
 	}
 	
 	// Test a half full battery
-	private String Test3() {
+	private String Testb3() {
 	
 		Battery bat = new Battery( 6000, 12000 );
 		if( BatteryMetric.calculateBatteryMetric( bat ) == 4)
 			return "PASS";
 		return "FAIL";
 	}
-	
-	private String Test4() { return "NA"; }
-	private String Test5() { return "NA"; }
-	private String Test6() { return "NA"; }
-	private String Test7() { return "NA"; }
+	*/
 }
