@@ -23,6 +23,8 @@ public class Agent{
 	private Node node;					// A reference to our node
 //  private Database database;
 
+	public static final int NOTCORRECTED = 1000;
+	
 	private PathTable pathTable;
 	private Map<Integer, Integer> batteryMetrics;
 	private Map<NodePair, Integer> transmissionCosts;
@@ -263,6 +265,24 @@ public class Agent{
 	public boolean hasPath( ArrayList<Integer> pPath ) {
 		return pathTable.hasPath( pPath );
 	}
+/*	
+	// --------------------------------------- ADDED BY JEFF
+	public 
+
+	public List<Integer> getBestPath( int pDestination ) {
+		
+		Iterator<ArrayList<Integer>> it = pathTable.getPathSet( pDestination ).paths.iterator();
+		List<Integer> closestPath = null;
+		
+		if( it.hasNext() ) {
+			
+			closestPath = it.next<Integer>();
+		}
+		
+		return bestPath;
+	}
+	*/
+	// --------------------------------------- END OF ADDED BY JEFF
 	
 	/**
 	 * Holds an association: destinations have a pathset of paths which can be
@@ -414,6 +434,21 @@ public class Agent{
 			
 			updateTransmissionCost( nodePair, cost );
 		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @return The transmission cost
+	 */
+	public int getTransmissionCost( int pNodeA, int pNodeB ) {
+		
+		Integer tCost = transmissionCosts.get( new NodePair( pNodeA, pNodeB ) );
+		if( tCost == null ) {
+			return NOTCORRECTED;
+		}
+		
+		return tCost.intValue();
 	}
 	
 	
