@@ -28,6 +28,7 @@ public class Node {
 	 */
 	private Node( int pId ) {
 		ID = pId;
+		battery = new Battery( 100, 100 );
 	}
 	
 	public static Node getInstance( int pId ) {
@@ -129,8 +130,8 @@ public class Node {
 	 * layer.
 	 * @param pDatagram Datagram received.
 	 */
-	public void receiveFrame(Frame pFrame) {
-		agent.receiveDatagram(pFrame.getDatagram());
+	public void receiveFrame(Frame pFrame, int pTransmissionDistance) {
+		agent.receiveDatagram(pFrame.getDatagram(), pTransmissionDistance );
 	}
 	
 	/**
@@ -140,6 +141,7 @@ public class Node {
 	 * 			amount of power we use to send this frame.
 	 */
 	public void sendFrame(Frame pFrame, int pTransmissionDistance) {
+		
 		/*** THIS NEEDS TO REDUCE OUR BATTERY LEVEL ***/
 		if (network != null) {
 			network.broadcast(this, pFrame, pTransmissionDistance);

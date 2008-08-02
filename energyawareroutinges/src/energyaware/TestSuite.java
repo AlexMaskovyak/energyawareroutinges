@@ -21,7 +21,7 @@ public class TestSuite {
 		Frame frame1 = new Frame( dg1 );
 //		Frame frame2 = new Frame( dg2 );
 		
-		node.receiveFrame(frame1);
+		node.receiveFrame(frame1, 0);
 		
 		
 //		node.receiveFrame(frame2);
