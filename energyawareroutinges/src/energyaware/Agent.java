@@ -23,7 +23,7 @@ public class Agent{
 	private Node node;					// A reference to our node
 //  private Database database;
 
-	public static final int NOTCORRECTED = 1000;
+	public static final int NOTCONNECTED = 1000;
 	
 	private PathTable pathTable;
 	private Map<Integer, Integer> batteryMetrics;
@@ -274,14 +274,46 @@ public class Agent{
 	public List<Integer> getBestPath( int pDestination ) {
 		
 		Iterator<ArrayList<Integer>> it = pathTable.getPathSet( pDestination ).paths.iterator();
-		List<Integer> bestPath = null;
+		List<Integer> bestPath = null, comparePath = null;	// Path options
+		int bestCost, compareCost;	// Keep track of the cost of each path
 		
+		// Determine if we even have one path to give
 		if( it.hasNext() ) {
 			
 			bestPath = it.next();
+			bestCost = getCost( bestPath.iterator() );
+			
+			// Determine if we have more than 1 path to evaluate
+			while( it.hasNext() ) {
+				
+				comparePath = it.next();
+				compareCost = getCost( comparePath.iterator() );
+				comparePath = null;
+			}
 		}
 		
 		return bestPath;
+	}
+	
+	private int getCost( Iterator<Integer> pIt ) {
+		
+		int value, start, next;
+		try {
+			value = 0;
+			start = pIt.next();
+			
+			while( pIt.hasNext() ) {
+				next = pIt.next();
+				
+				// Battery Metric * Transmission Cost
+				value += getBatteryMetrics(next) * getTransmissionCost( start, next);
+			}
+		}
+		catch( Exception e ) {
+			value = Integer.MAX_VALUE;
+		}
+		
+		return value;
 	}
 
 	/**
@@ -478,7 +510,7 @@ public class Agent{
 		
 		Integer tCost = transmissionCosts.get( new NodePair( pNodeA, pNodeB ) );
 		if( tCost == null ) {
-			return NOTCORRECTED;
+			return NOTCONNECTED;
 		}
 		
 		return tCost.intValue();
@@ -503,6 +535,26 @@ public class Agent{
 		public NodePair( int pNodeA, int pNodeB ) {
 			nodeA = Math.min( pNodeA, pNodeB );
 			nodeA = Math.max( pNodeA, pNodeB );
+		}
+		
+		/**
+		 * Overrides the default equals.
+		 */
+		public boolean equals( Object o ) {
+			
+			if( !(o instanceof NodePair) ) {
+				return false;
+			}
+			
+			return (((NodePair) o).nodeA == this.nodeA) &&
+				((NodePair) o).nodeB == this.nodeB;
+		}
+		
+		/**
+		 * Overrides the default hashcode
+		 */
+		public int hashCode() {
+			return (nodeA * 1271) + nodeB;
 		}
 	}
 }
