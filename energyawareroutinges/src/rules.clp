@@ -8,8 +8,9 @@
 (deftemplate BatteryMetric 	( declare( from-class BatteryMetric )))
 (deftemplate Datagram		( declare( from-class Datagram )))
 (deftemplate NodeID 		( declare( from-class NodeID )))
-(deftemplate Path			( declare( from-class ArrayList)))
 (deftemplate Segment		( declare( from-class Segment )))
+
+(deftemplate DestinationPath (slot Destination)(slot Path))
 
 ; List of all global variables available to JESS
 (defglobal ?*id* = 1)		; this device's id
@@ -23,6 +24,7 @@
 (deffunction updatePathTable (?path)
     "Adds a path to the path table if it does not already exist"
     ; Update code later
+    (?*agent* updatePathTable ?path)
     )
 
 (deffunction updateBatteryMetrics (?metrics)
@@ -57,7 +59,7 @@
     )
 
 ; --- List of all rules used by processing in JESS ---
-
+; Initialization Rule 1
 (defrule setAgent
     "We need access to an Agent and its ID in JESS"
     (Agent (OBJECT ?a))
@@ -68,9 +70,9 @@
 
 
 ; --- Responses to Datagrams received from other nodes ---
-; 
+
 ; --- Universal Rule for Datagrams ---
-; Rule 1: Given any Datagram, we want to extract the battery metric, path & transmission cost
+; Universal Rule 1: Given any Datagram, we want to extract the battery metric, path & transmission cost
 (defrule ExtractTransmissionCost
     "Extracts the Battery Metric, Path & Transmission Cost from a datagram."
     (Datagram (path ?path) (batteryMetricValues ?metrics) (transmissionValues ?tValues))
@@ -88,9 +90,9 @@
     (Datagram {type == "RREQ"} {destination == ?*id*} (OBJECT ?incoming))
     =>
     (?incoming addToPath ?*id*)
-
+	; Assign the incoming datagram's reversed path to revpath
     (bind ?revpath (call Datagram reverse ?incoming.path))
-
+	; Create a datagram and bind it to the response variable
     (bind ?response (
             new Datagram 
             	"RREP" 
@@ -102,21 +104,17 @@
             	))
 
     (undefinstance ?incoming)
-    
-    (?*agent* sendDatagram ?response 10)
-    
-    (printout t "RREQ-RREP Fired" crlf))
-
-    
+    (?*agent* sendDatagram ?response 10)   
+    (printout t "RREQ-RREP Fired" crlf))  
     
 
 ; Rule 2:
 (defrule NonNovelRREQID
     "We've received RREQ for which we are not the destination.  Its RREQ_ID is non-novel, meaning we've already been a part of this RREQ."
-    ?dg <- (Datagram {type == "RREQ"}{destination != ?*id*}(rreqID ?rreqID))
+    ?incoming <- (Datagram {type == "RREQ"}{destination != ?*id*}(rreqID ?rreqID))
     (not (test(isNovelRREQID ?rreqID)))
     =>
-    (retract ?dg)
+    (retract ?incoming)
     (printout t "Receive a RREQ and have not seen the RREQ-ID before" crlf))
 
 ; Rule 3:
