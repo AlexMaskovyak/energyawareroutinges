@@ -1,5 +1,6 @@
 package energyaware;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,8 +13,17 @@ import java.util.Iterator;
 public class TestSuite {
 
 	public static void main( String [] args ) {
+		Network network = Network.getInstance();
 		
-		Node node = Node.getInstance( 789 );
+		Node node1 = Node.getInstance( 1 );
+		Node node789 = Node.getInstance( 789 );
+		Point point1 = new Point(0, 0);
+		Point point789 = new Point(1, 1);
+		
+		network.addNode(node1, point1);
+		network.connect(node1);
+		network.addNode(node789, point789);
+		network.connect(node789);
 		
 		Datagram dg1 = new Datagram("RREQ", 1, 789, new Segment(), makeList(), 3);
 //		Datagram dg2 = new Datagram("RREP", 2, -2, new Segment(), makeList(), 3);
@@ -21,7 +31,7 @@ public class TestSuite {
 		Frame frame1 = new Frame( dg1 );
 //		Frame frame2 = new Frame( dg2 );
 		
-		node.receiveFrame(frame1, 0);
+		node1.receiveFrame(frame1, 0);
 		
 		
 //		node.receiveFrame(frame2);
@@ -29,10 +39,8 @@ public class TestSuite {
 	
 	private static ArrayList<Integer> makeList() {
 		ArrayList <Integer> a = new ArrayList<Integer>();
-		a.add( 0 );
 		a.add( 1 );
-		a.add( 2 );
-		a.add( 3 );
+		a.add( 789 );
 		return a;
 	}
 	

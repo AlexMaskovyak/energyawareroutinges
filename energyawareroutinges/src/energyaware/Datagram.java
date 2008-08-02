@@ -46,14 +46,27 @@ public class Datagram {
 	 * @param pDestination
 	 */
 	public Datagram ( String pType, int pSource, int pDestination ) {
+		this ( pType, pSource, pDestination, new Segment(), new ArrayList<Integer>(), new ArrayList<Integer>());
+	}
+	
+	/**
+	 * 
+	 * @param pType
+	 * @param pSource
+	 * @param pDestination
+	 * @param pSegment
+	 * @param pPath
+	 * @param pBatteryMetricValues
+	 */
+	public Datagram ( String pType, int pSource, int pDestination, Segment pSegment, List<Integer> pPath, List<Integer> pBatteryMetricValues ) {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
-		segment = new Segment();
-		path = new ArrayList<Integer>();
-		batteryMetricValues = new ArrayList<Integer>();
+		segment = pSegment;
+		batteryMetricValues = pBatteryMetricValues;
 		transmissionValues = new ArrayList<Integer>();
 	}
+	
 	
 	/**
 	 * Creates a new Datagram from the the specified parameters.
