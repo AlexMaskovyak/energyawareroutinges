@@ -23,18 +23,17 @@
 
 (deffunction updatePathTable (?path)
     "Adds a path to the path table if it does not already exist"
-    ; Update code later
     (?*agent* updatePathTable ?path)
     )
 
-(deffunction updateBatteryMetrics (?metrics)
+(deffunction updateBatteryMetrics (?path ?metrics)
     "Updates the metrics related with another node"
-    ; Update code later
+    (?*agent* updateBatteryMetrics ?metrics)
     )
 
-(deffunction updateTransmissionCost (?path ?tcost)
+(deffunction updateTransmissionCosts (?path ?tcosts)
     "Updates the transmission cost to a node"
-    ; Update code later
+    (?*agent updateTransmissionCosts ?path ?tcosts)
     )
 
 (deffunction getPath (?destination)
@@ -78,8 +77,8 @@
     (Datagram (path ?path) (batteryMetricValues ?metrics) (transmissionValues ?tValues))
     =>
     (updatePathTable ?path)
-    (updateBatteryMetrics ?metrics)
-    (updateTransmissionCost ?path ?tValues)
+    (updateBatteryMetrics ?path ?metrics)
+    (updateTransmissionCosts ?path ?tValues)
     (printout t "Battery Metric, Path & Transmission Costs updated from an Incoming Datagram" crlf)) 
 
 
