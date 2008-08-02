@@ -61,6 +61,9 @@
     (bind ?*id* (?*agent* getID))
     (printout t "Agent & Agent ID are set" crlf))
 
+
+; --- Responses to Datagrams received from other nodes ---
+
 ; Rule 1: Given a RREQ (request), we want to send a RREP (Replay)
 (defrule RREQtoRREP
     "Tested: A RREQ Datagram arrives at the destination and a RREP Datagram is sent back."
@@ -201,11 +204,12 @@
     )
 
 ; Rule 10
-(defrule ForwardDatagram
+(defrule ForwardReceivedDatagram
     "Data type datagram arrived at a midpoint along the path to destination."
     ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
     (test (isNextHopInPath ?src (?incoming getPath)))
     =>
+    (?incoming addBatteryMetricValue (getBatteryMetric))
     (bind ?response (
             new Datagram
             	"DATA"
@@ -227,12 +231,49 @@
     )
 
 
-; ---- Segment rules ----
+; --- Responses to datagrams that we create ---
+
+; Rule 12
+(defrule ForwardOurDatagram
+    "Data type datagram was created from a segment and must be sent out."
+    ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
+    (test (havePath ?dest))
+    =>
+    (?outgoing addBatteryMetricValue (getBatteryMetric))
+    (?outgoing setPath (getPath ?dest))
+	(bind ?response ?outgoing)
+    (retract ?outgoing)
+    (?*agent* sendDatagram ?response 10)    
+    )
+
+; Rule 13
+(defrule CreateRREQForDatagram
+    "Data type datagram was created from a segment, but we need a path first.  We want to keep this datagram until we get the response."
+    ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
+	(not (test (havePath ?dest)))
+    =>
+    (bind ?response (
+            new Datagram
+            	"RREQ"
+            	?*id*
+            	?dest
+            	))
+    (?response addToPath ?*id*)
+    (?response addBatteryMetricValue (getBatteryMetric))
+    (?*agent* sendDatagram ?response 10)    
+    )
+
+; --- Responses to segments received from User/Node ---
 ; Rul 12
 (defrule ReceiveSegmentFromUser
-    "Segment received, determine if we have a path, if we do create a datagram and add."
+    "Segment received, create a datagram without path information."
+    ?outgoing <- (Segment (destination ?dest))
     =>
-    
+    (add (new Datagram
+            "DATA"
+            ?*id*
+            ?dest))
+    (retract ?outgoing)
     )
 
 (facts)
