@@ -230,7 +230,7 @@
 ; ---- Segment rules ----
 ; Rul 12
 (defrule ReceiveSegmentFromUser
-    "Segment received, determine if we have a path."
+    "Segment received, determine if we have a path, if we do create a datagram and add."
     =>
     
     )
