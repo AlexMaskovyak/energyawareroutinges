@@ -32,11 +32,23 @@ public class Datagram {
 	/**
 	 * Default constructor.
 	 */
-	public Datagram() {
-		
-		type = Datagram.UNINIT;
-		source = NONE;
-		destination = NONE;
+	public Datagram() {		
+		this(Datagram.UNINIT,
+				Datagram.NONE,
+				Datagram.NONE);
+	}
+	
+	/**
+	 * Create a new datagram with type, source, and destination values.  Set
+	 * up objects.
+	 * @param pType
+	 * @param pSource
+	 * @param pDestination
+	 */
+	public Datagram ( String pType, int pSource, int pDestination ) {
+		type = pType;
+		source = pSource;
+		destination = pDestination;
 		segment = new Segment();
 		path = new ArrayList<Integer>();
 		batteryMetricValues = new ArrayList<Integer>();
