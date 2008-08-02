@@ -105,7 +105,6 @@ public class TestSuite {
 		// check our transmission cost
 		
 	}
-	
 
 	private static ArrayList<Integer> makeList( Integer ... integers ) {
 		ArrayList <Integer> a = new ArrayList<Integer>();
@@ -116,74 +115,101 @@ public class TestSuite {
 		
 		return a;
 	}
-/*
-	public static void TestN() {
-		
-		Network network = Network.getInstance();
-		
-		Node node1 = Node.getInstance( 1 );
-		Node node789 = Node.getInstance( 789 );
-		Point point1 = new Point(0, 0);
-		Point point789 = new Point(1, 1);
-		
-		network.addNode(node1, point1);
-		network.connect(node1);
-		network.addNode(node789, point789);
-		network.connect(node789);
-		
-		Datagram dg1 = new Datagram("RREQ", 1, 789, new Segment(), makeList(), 3);
-//		Datagram dg2 = new Datagram("RREP", 2, -2, new Segment(), makeList(), 3);
-		
-		Frame frame1 = new Frame( dg1 );
-//		Frame frame2 = new Frame( dg2 );
-		
-		node1.receiveFrame(frame1, 0);
-		
-		
-//		node.receiveFrame(frame2);
+
+	/**
+	 * Test: A RREQ Datagram arrives at the destination and a RREP Datagram is
+	 * sent back.
+	 */
+	public void TestRuleRREQ1() {
+		// RREQtoRREP
 	}
 	
-	
-	
-<<<<<<< .mine
-	public TestSuite() {
-		System.out.println( "TEST 1:\t" + Test1() );
-		System.out.println( "TEST 2:\t" + Test2() );
-		System.out.println( "TEST 3:\t" + Test3() );
-		System.out.println( "TEST 4:\t" + Test4() );
-		System.out.println( "TEST 5:\t" + Test5() );
-		System.out.println( "TEST 6:\t" + Test6() );
-		System.out.println( "TEST 7:\t" + Test7() );
+	/**
+	 * Test: We have received a RREQ for which we are not the destination and
+	 * the RREQ_ID is not new.
+	 */
+	public void TestRuleRREQ2() {
+		// NonNovelRREQID
 	}
 	
-=======
->>>>>>> .r43
-	// Test an empty battery
-	private String Testb1() {
-	
-		Battery bat = new Battery(0, 200);
-		if( BatteryMetric.calculateBatteryMetric(bat) == 5 )
-			return "PASS";
-		
-		return "JFAIL";
+	/**
+	 * Test: We have receive a RREQ datagram and we already have its path.
+	 */
+	public void TestRuleRREQ3() {
+		// ShortCircuitRREQ
 	}
 	
-	// Test a full battery
-	private String Testb2() {
-	
-		Battery bat = new Battery( 150, 150 );
-		if( BatteryMetric.calculateBatteryMetric( bat ) == 1 )
-			return "PASS";
-		return "FAIL";
+	/**
+	 * Test: Forward a RREQ datagram for which we have no path and is not
+	 * addressed to us.
+	 */
+	public void TestRuleRREQ4() {
+		// ForwardRREQ
 	}
 	
-	// Test a half full battery
-	private String Testb3() {
-	
-		Battery bat = new Battery( 6000, 12000 );
-		if( BatteryMetric.calculateBatteryMetric( bat ) == 4)
-			return "PASS";
-		return "FAIL";
+	/**
+	 * Test: RREP returns to original RREQer
+	 */
+	public void TestRuleRREQ5() {
+		// RrepAtSource
 	}
-	*/
+	
+	/**
+	 * Test: RREP and we are the next node in the path but not the destination
+	 */
+	public void TestRuleRREQ6() {
+		// ForwardRREP
+	}
+	
+	/**
+	 * Test: RREP and we are not the next node in the path or the destination
+	 */
+	public void TestRuleRREQ7() {
+		// DropRREP
+	}
+	
+	/**
+	 * Test: Data type datagram arrived at final destination
+	 */
+	public void TestRuleRREQ8() {
+		// SegmentForUs
+	}
+	
+	/**
+	 * Test: Data type datagram arrived at final destination
+	 */
+	public void TestRuleRREQ9() {
+		// ForwardReceivedDatagram
+	}
+	
+	/**
+	 * Test: Data type datagram arrived that we overheard, we aren't the next
+	 * hop in the path, so we drop it.
+	 */
+	public void TestRuleRREQ10() {
+		// DropDatagram
+	}
+	
+	/**
+	 * Test: Data type datagram was created from a segment and must be sent out.
+	 */
+	public void TestRuleRREQ11() {
+		// ForwardOurDatagram
+	}
+	
+	/**
+	 * Test: Data type datagram was created from a segment, but we need a path
+	 * first.  We want to keep this datagram until we get the response.
+	 */
+	public void TestRuleRREQ12() {
+		// CreateRREQForDatagram
+	}
+	
+	/**
+	 * Test: Segment received, create a datagram without path information.
+	 */
+	public void TestRuleRREQ13() {
+		// ReceiveSegmentFromUser
+	}
+
 }
