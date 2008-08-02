@@ -193,9 +193,46 @@
 
 ;Rule 9
 (defrule SegmentForUs
-    "Data type segment arrived at final destination"
-    ?incoming <- (Datagram {type == "DATA"}{destination == ?*id*})
+    "Data type datagram arrived at final destination"
+    ?incoming <- (Datagram {type == "DATA"}{destination == ?*id*} (segment ?segment))
     =>
-    (?*agent* ) )
+    (retract ?incoming)
+    (?*agent* sendMessage ?segment)
+    )
+
+; Rule 10
+(defrule ForwardDatagram
+    "Data type datagram arrived at a midpoint along the path to destination."
+    ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
+    (test (isNextHopInPath ?src (?incoming getPath)))
+    =>
+    (bind ?response (
+            new Datagram
+            	"DATA"
+            	?incoming.source
+            	?incoming.destination
+            	(?incoming getPath)
+            	(?incoming getBatteryMetricValues)))
+    (retract ?incoming)
+    (?*agent* sendDatagram ?response 10)
+    )
+
+; Rule 11
+(defrule DropDatagram
+    "Data type datagram arrived that we overheard, we aren't the next hop in the path, so we drop it."
+    ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
+    (not (test (isNextHopInPath ?src (?incoming getPath))))
+    =>
+    (retract ?incoming)
+    )
+
+
+; ---- Segment rules ----
+; Rul 12
+(defrule ReceiveSegmentFromUser
+    "Segment received, determine if we have a path."
+    =>
+    
+    )
 
 (facts)
