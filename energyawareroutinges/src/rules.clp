@@ -8,12 +8,12 @@
 (deftemplate BatteryMetric 	( declare( from-class BatteryMetric )))
 (deftemplate Datagram		( declare( from-class Datagram )))
 (deftemplate NodeID 		( declare( from-class NodeID )))
-(deftemplate Segment		( declare( from-class Segment )))
 (deftemplate Path			( declare( from-class ArrayList)))
+(deftemplate Segment		( declare( from-class Segment )))
 
 ; List of all global variables available to JESS
-(defglobal ?*id* = 1)
-(defglobal ?*agent* = 1)
+(defglobal ?*id* = 1)		; this device's id
+(defglobal ?*agent* = 1)	; our contact with the Java world
 
 ; List of all functions/methods we want access to
 (deffunction getBatteryMetric ()
@@ -36,7 +36,12 @@
     )
 
 (deffunction getPath (?destination)
-    "Return the best path to a given destination")
+    "Return the best path to a given destination"
+    (bind ?path (new ArrayList))
+    (?path add 1)
+    (?path add 789)
+    ?path
+    )
 
 (deffunction havePath (?destination)
     "Determine if there is a path to a destination"
@@ -63,8 +68,21 @@
 
 
 ; --- Responses to Datagrams received from other nodes ---
+; 
+; --- Universal Rule for Datagrams ---
+; Rule 1: Given any Datagram, we want to extract the battery metric, path & transmission cost
+(defrule ExtractTransmissionCost
+    "Extracts the Battery Metric, Path & Transmission Cost from a datagram."
+    (Datagram (path ?path) (batteryMetricValues ?metrics) (transmissionValues ?tValues))
+    =>
+    (updatePathTable ?path)
+    (updateBatteryMetrics ?metrics)
+    (updateTransmissionCost ?path ?tValues)
+    (printout t "Battery Metric, Path & Transmission Costs updated from an Incoming Datagram" crlf)) 
 
-; Rule 1: Given a RREQ (request), we want to send a RREP (Replay)
+
+; --- Rules for RREQs ---
+; Rule 1: Given a RREQ (request) for which we are the destination, we want to send a RREP (reply)
 (defrule RREQtoRREP
     "Tested: A RREQ Datagram arrives at the destination and a RREP Datagram is sent back."
     (Datagram {type == "RREQ"} {destination == ?*id*} (OBJECT ?incoming))
@@ -72,9 +90,6 @@
     (?incoming addToPath ?*id*)
 
     (bind ?revpath (call Datagram reverse ?incoming.path))
-
-    (?incoming clearBatteryMetricValues)
-    (?incoming addBatteryMetricValue (getBatteryMetric))
 
     (bind ?response (
             new Datagram 
@@ -87,61 +102,56 @@
             	))
 
     (undefinstance ?incoming)
+    
     (?*agent* sendDatagram ?response 10)
+    
     (printout t "RREQ-RREP Fired" crlf))
 
     
     
-; Rule 2: Given any Datagram, we want to extract the battery metric, path & transmission cost
-(defrule ExtractTransmissionCost
-    "Extracts the Battery Metric, Path & Transmission Cost from a datagram."
-    (Datagram(path ?path)(batteryMetricValues ?metrics)(transmissionValues ?tValues))
-    =>
-    (updatePathTable ?path)
-    (updateBatteryMetrics ?metrics)
-    (updateTransmissionCost ?path ?tValues)
-    (printout t "Battery Metric, Path & Transmission Costs updated from an Incoming Datagram" crlf)) 
 
-; Rule 3:
+; Rule 2:
 (defrule NonNovelRREQID
-    "We've received non-new RREQ with an ID and we're not the destination."
+    "We've received RREQ for which we are not the destination.  Its RREQ_ID is non-novel, meaning we've already been a part of this RREQ."
     ?dg <- (Datagram {type == "RREQ"}{destination != ?*id*}(rreqID ?rreqID))
     (not (test(isNovelRREQID ?rreqID)))
     =>
     (retract ?dg)
-    (printout t "Receive a RREQ and have not seen the RREQ-ID before"))
+    (printout t "Receive a RREQ and have not seen the RREQ-ID before" crlf))
 
-; Rule 4:
+; Rule 3:
 (defrule ShortCircuitRREQ
     "Receive a RREQ datagram and we already have a path."
-    ?incoming <- (Datagram {type == "RREQ"}(destination ?dest)(rreqID ?rreqID))
-    (test (<> ?dest ?*id*))
+    ?dg <- (Datagram {type == "RREQ"} {destination != ?*id*} (destination ?dest) (rreqID ?rreqID) (OBJECT ?incoming))
+    ;(test (<> (?incoming getDestination) ?*id*))
     (test (isNovelRREQID ?rreqID))
     (test (havePath ?dest))
     =>
  	(bind ?pathSoFar (?incoming getPath))
     (bind ?restOfPath (getPath ?dest))
-    (bind ?fullPath (?pathSoFar addAll ?restOfPath))
+    (?pathSoFar addAll ?restOfPath)
+
+    (bind ?fullPath ?pathSoFar)
     (bind ?revBestPath (call Datagram reverse ?fullPath))
-    (?incoming addBatteryMetricValue (getBatteryMetric))
-    (bind ?revBattMetric (call Datagram reverse ?incoming.batteryMetrics))
+    ;(?incoming addBatteryMetricValue (getBatteryMetric))
+    ;(bind ?revBattMetric (call Datagram reverse (?incoming getBatteryMetricValues)))
     (bind ?response (
             new Datagram 
             	"RREP" 
             	?*id* 
-            	?incoming.source 
-            	?incoming.segment 
+                ?incoming.source 
+            	?incoming.segment
             	?revBestPath 
-            	?revBattMetric))
-    (retract ?incoming)
+            	(getBatteryMetric)))
+    (retract ?dg)
     (?*agent* sendDatagram ?response 10)
-    (printout t "Shut up" crlf)
+    (printout t "Short circuited RREQ" crlf)
     )
 
-; Rule 5
+; Rule 4
 (defrule ForwardRREQ
     "Forward a RREQ datagram for which we have no path and is not for us."
-    ?incoming <- (Datagram {type == "RREQ"}(destination ?dest)(rreqID ?rreqID))
+    ?dg <- (Datagram {type == "RREQ"}(destination ?dest)(rreqID ?rreqID) (OBJECT ?incoming))
     (test (<> ?dest ?*id*))
     (test (isNovelRREQID ?rreqID))
     (not (test(havePath ?dest)))
@@ -156,24 +166,25 @@
             	?incoming.segment 
             	(?incoming getPath)
             	(?incoming getBatteryMetricValues)))
-    (retract ?incoming)
+    (retract ?dg)
     (?*agent* sendDatagram ?response 10)
-    (printout t "Shut up" crlf)
+    (printout t "Forward RREQ" crlf)
     )
 
 
-;Rule 6 
+;Rule 5 
 (defrule RrepAtSource
     "RREP returns to original RREQer"
     ?incoming <- (Datagram {type == "RREP"}{destination == ?*id*})
     =>
     (retract ?incoming)
+    (printout t "RREP received at Source" crlf)
     )
 
-; Rule 7
+; Rule 6
 (defrule ForwardRREP
     "RREP and we are the next node in the path but not the destination"
-    ?incoming <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src))
+    ?dg <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src) (OBJECT ?incoming))
     (test (isNextHopInPath ?src (?incoming getPath)))
     =>
     (?incoming addBatteryMetricValue (getBatteryMetric))
@@ -185,20 +196,20 @@
             	?incoming.segment 
             	(?incoming getPath)
             	(?incoming getBatteryMetricValues)))
-    (retract ?incoming)
+    (retract ?dg)
     (?*agent* sendDatagram ?response 10)
 	)
 
-; Rule 8
+; Rule 7
 (defrule DropRREP
     "RREP and we are not the next node in the path or the destination"
-    ?incoming <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src))
+    ?dg <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src) (OBJECT ?incoming))
     (not (test (isNextHopInPath ?src (?incoming getPath))))
     =>
-    (retract ?incoming)
+    (retract ?dg)
 	)
 
-;Rule 9
+;Rule 8
 (defrule SegmentForUs
     "Data type datagram arrived at final destination"
     ?incoming <- (Datagram {type == "DATA"}{destination == ?*id*} (segment ?segment))
@@ -207,7 +218,7 @@
     (?*agent* sendMessage ?segment)
     )
 
-; Rule 10
+; Rule 9
 (defrule ForwardReceivedDatagram
     "Data type datagram arrived at a midpoint along the path to destination."
     ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
@@ -225,7 +236,7 @@
     (?*agent* sendDatagram ?response 10)
     )
 
-; Rule 11
+; Rule 10
 (defrule DropDatagram
     "Data type datagram arrived that we overheard, we aren't the next hop in the path, so we drop it."
     ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
@@ -237,7 +248,7 @@
 
 ; --- Responses to datagrams that we create ---
 
-; Rule 12
+; Rule 1
 (defrule ForwardOurDatagram
     "Data type datagram was created from a segment and must be sent out."
     ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
@@ -250,7 +261,7 @@
     (?*agent* sendDatagram ?response 10)    
     )
 
-; Rule 13
+; Rule 2
 (defrule CreateRREQForDatagram
     "Data type datagram was created from a segment, but we need a path first.  We want to keep this datagram until we get the response."
     ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
@@ -268,7 +279,7 @@
     )
 
 ; --- Responses to segments received from User/Node ---
-; Rul 12
+; Rule 1
 (defrule ReceiveSegmentFromUser
     "Segment received, create a datagram without path information."
     ?outgoing <- (Segment (destination ?dest))

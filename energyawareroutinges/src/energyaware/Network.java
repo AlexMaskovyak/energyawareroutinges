@@ -25,8 +25,8 @@ public class Network {
 	
 	
 	
-	private ArrayList<Node> nodes;
-	private ArrayList<Node> connectedNodes;
+	private List<Node> nodes;
+	private List<Node> connectedNodes;
 	private Map <Node, Point> geography;
 	private int nodeCount = 0;
 	
@@ -42,6 +42,7 @@ public class Network {
 	private Network() {
 		nodes = new ArrayList<Node>( 20 );
 		geography = new HashMap<Node, Point>( 20 );	
+		connectedNodes = new ArrayList<Node>( 20 );
 		generator = new Random(System.nanoTime());
 	}
 	
@@ -118,8 +119,13 @@ public class Network {
 		// frames store the next hop
 		int nextHopID = pFrame.getDestination();
 		
-		// go through all of the nodes in the network
+		// go through all of the nodes in the network that are not the source
 		for (Node node : connectedNodes) {
+			// do not deliver information to ourselves
+			if (pSourceNode == node) {
+				continue;
+			}
+			
 			// obtain the position of this node
 			Point potentialDestination = geography.get(node);
 			
