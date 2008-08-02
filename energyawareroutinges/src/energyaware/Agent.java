@@ -28,6 +28,7 @@ public class Agent{
 	private PathTable pathTable;
 	private Map<Integer, Integer> batteryMetrics;
 	private Map<NodePair, Integer> transmissionCosts;
+	private Map<Integer,Integer> rreqIDs;
 	
 	
 	/**
@@ -38,6 +39,8 @@ public class Agent{
 //		Database aDatabase
 		batteryMetrics = new HashMap<Integer,Integer>();
 		pathTable = new PathTable();
+		transmissionCosts = new HashMap<NodePair,Integer>();
+		rreqIDs = new HashMap<Integer,Integer>();
 		
 		try {
 
@@ -265,23 +268,53 @@ public class Agent{
 	public boolean hasPath( ArrayList<Integer> pPath ) {
 		return pathTable.hasPath( pPath );
 	}
-/*	
-	// --------------------------------------- ADDED BY JEFF
-	public 
 
+	// --------------------------------------- ADDED BY JEFF
+	
 	public List<Integer> getBestPath( int pDestination ) {
 		
 		Iterator<ArrayList<Integer>> it = pathTable.getPathSet( pDestination ).paths.iterator();
-		List<Integer> closestPath = null;
+		List<Integer> bestPath = null;
 		
 		if( it.hasNext() ) {
 			
-			closestPath = it.next<Integer>();
+			bestPath = it.next();
 		}
 		
 		return bestPath;
 	}
-	*/
+
+	/**
+	 * Determines if a given RREQ ID is currently in the set of ID's that this
+	 * Agent is aware of.
+	 * 
+	 * @param pID The id we would like to check against.
+	 * @return True if the key is not in our set.
+	 */
+	public boolean isNovelRREQID( int pID ) {
+		
+		return !rreqIDs.containsKey( pID );
+	}
+	
+	/**
+	 * Adds a RREQ ID to the list of ID's we have already seen.  Note: You can
+	 * always add a key even if it already exists.
+	 * 
+	 * @param pID The ID we would like to add.
+	 */
+	public void addRREQID( int pID ) {
+		
+		rreqIDs.put(pID, pID);
+	}
+	
+	/**
+	 * Remove a RREQ ID from the list of IDs that we have already seen.
+	 */
+	public void removeRREQID( int pID ) {
+		
+		rreqIDs.remove(pID);
+	}
+	
 	// --------------------------------------- END OF ADDED BY JEFF
 	
 	/**
