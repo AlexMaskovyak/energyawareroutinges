@@ -73,39 +73,85 @@ public class TestSuite {
 		int middle = 2;
 		int destination = 3;
 		
+		int sourceBattery = 4;
+		int middleBattery = 5;
+		int destinationBattery = 6;
+		
+		int firstLink = 5;
+		int secondLink = 10;
+		
 		Node node1 = Node.getInstance( source );
 		
 		Agent agent = node1.getAgent();
 		Rete engine = agent.getEngine();
+		
 		Datagram dg = 
 			new Datagram (
 				Datagram.UNINIT,
 				source,
 				destination);
 		
+		// add path
 		ArrayList<Integer> path = TestSuite.makeList( source, middle, destination );
 		dg.setPath( path );
+		
+		// add batteries
+		ArrayList<Integer> batteryMetrics = 
+			TestSuite.makeList( sourceBattery, middleBattery, destinationBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		// transmission costs
+		ArrayList<Integer> transmissionCosts =
+			TestSuite.makeList( firstLink, secondLink );
+		dg.setTransmissionValues( transmissionCosts );
+		
 		agent.receiveDatagram( dg, 10 );
-		engine.add( dg );
+		
+		
 		
 		// make sure we have a datagram in there
 		if ( engine.containsObject( dg ) ) {
-			
 			System.out.println( "UR1: Datagram inserted properly." );
 		}
 		
 		// check our path
 		if ( agent.hasPath( path ) ) {
-			
 			System.out.println( "UR1: Path succesfully added to table." );
 		}
 		
-		// check our battery metric
+		// check battery metrics
+		boolean batteryOK = true;
+		for ( int i = 0; i < batteryMetrics.size(); ++i) {
+			if (agent.getBatteryMetrics( path.get( i ) ) != batteryMetrics.get( i ) ) {
+				batteryOK = false;
+			}
+		}
+		if ( batteryOK ) {
+			System.out.println( "UR1: Battery metrics successfully added." );
+		}
 		
 		// check our transmission cost
+		boolean transCostOK = true;
+		for ( int i = 0; i < transmissionCosts.size() - 1; ++i) {
+			int agentsCost = 
+				agent.getTransmissionCost(path.get( i ), path.get( i + 1 ));
+			int origCost = transmissionCosts.get( i );
+				
+			if (agentsCost != origCost) {
+				transCostOK = false;
+			}
+		}
 		
+		if ( transCostOK ) {
+			System.out.println( "UR1: Transmission metrics successfully added. " );
+		}
 	}
 
+	/**
+	 * 
+	 * @param integers
+	 * @return
+	 */
 	private static ArrayList<Integer> makeList( Integer ... integers ) {
 		ArrayList <Integer> a = new ArrayList<Integer>();
 		
