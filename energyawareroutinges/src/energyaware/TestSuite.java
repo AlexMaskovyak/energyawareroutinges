@@ -20,9 +20,9 @@ public class TestSuite {
 	}
 	
 	public TestSuite() {
-		
+
 		try {
-			
+
 		System.out.printf( "TEST 1:\n%s\n%s\n%s \n", "-----", TestRuleInit1(), "-----");
 		System.out.printf( "TEST 2:\n%s\n%s\n%s \n", "-----", TestRuleUniversal1(), "-----");
 		System.out.printf( "TEST 3:\n%s\n%s\n%s \n", "-----", TestRuleRREQ1(), "-----");
@@ -36,10 +36,12 @@ public class TestSuite {
 		
 //		System.out.println( "TEST 3:\t" + TestRuleRREQ2() );
 		
+		TestPathUpdate();	// ALEX THE UPDATE PATH WORKS!
 		}
 		catch( JessException e ) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	
@@ -907,4 +909,23 @@ public class TestSuite {
 //		}
 	}
 
+	/**
+	 * Test whether we update/add paths correctly. 
+	 */
+	public void TestPathUpdate() {
+		
+		int source = 1, destination = 4;
+		Node node = Node.getInstance( source );
+		Agent agent = node.getAgent();
+
+		ArrayList<Integer> newPath = new ArrayList<Integer>();
+		newPath.add( source );
+		newPath.add( 2 );
+		newPath.add( 3 );
+		newPath.add( destination );
+		
+		agent.updatePathTable(newPath, source);
+		
+		System.out.println( agent.getPathTable() );
+	}
 }
