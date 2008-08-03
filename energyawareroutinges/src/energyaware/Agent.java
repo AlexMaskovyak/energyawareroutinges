@@ -451,6 +451,12 @@ public class Agent{
 		public boolean hasPath( ArrayList<Integer> pPath ) {
 			int dest = pPath.get( pPath.size()-1 );
 			
+			PathSet pathSet = pathSetMap.get( dest );
+			
+			if ( pathSet == null ) {
+				return false;
+			}
+			
 			return pathSetMap.get( dest ).hasPath(pPath);
 		}
 		
