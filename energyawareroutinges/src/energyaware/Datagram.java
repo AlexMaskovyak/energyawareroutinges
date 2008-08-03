@@ -82,6 +82,7 @@ public class Datagram {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
+		segment = pSegment;
 		path = pPath;
 		batteryMetricValues = new ArrayList<Integer>();
 		batteryMetricValues.add(batteryMetric);

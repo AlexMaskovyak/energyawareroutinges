@@ -15,6 +15,9 @@ public class Node {
 	private int ID;
 	private Network network;	// our connection to the network
 	
+	private Frame lastFrameSent; // holds the last frame sent
+	
+	public static final int STARTINGBATTERYLEVEL = 100;
 	
 	/**
 	 * Default constructor creates a new Node
@@ -28,7 +31,7 @@ public class Node {
 	 */
 	private Node( int pId ) {
 		ID = pId;
-		battery = new Battery( 100, 100 );
+		battery = new Battery( STARTINGBATTERYLEVEL, STARTINGBATTERYLEVEL );
 	}
 	
 	public static Node getInstance( int pId ) {
@@ -97,6 +100,13 @@ public class Node {
 		ID = pID;
 	}
 	
+	/**
+	 * Retrieves the last frame that was sent by this node.
+	 * @return Last frame sent by this node, null otherwise.
+	 */
+	public Frame getLastFrameSent() {
+		return lastFrameSent;
+	}
 	
 	/**
 	 * Get a reference to the network to which this Node belongs.
@@ -141,6 +151,7 @@ public class Node {
 	 * 			amount of power we use to send this frame.
 	 */
 	public void sendFrame(Frame pFrame, int pTransmissionDistance) {
+		lastFrameSent = pFrame;
 		
 		/*** THIS NEEDS TO REDUCE OUR BATTERY LEVEL ***/
 		if (network != null) {
