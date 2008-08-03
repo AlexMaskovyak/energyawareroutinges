@@ -85,7 +85,7 @@
 ; --- Rules for RREQs ---
 ; Rule 1: Given a RREQ (request) for which we are the destination, we want to send a RREP (reply)
 (defrule RREQtoRREP
-    "Tested: A RREQ Datagram arrives at the destination and a RREP Datagram is sent back."
+    "A RREQ Datagram arrives at the destination and a RREP Datagram is sent back."
     (Datagram {type == "RREQ"} {destination == ?*id*} (OBJECT ?incoming))
     =>
     (?incoming addToPath ?*id*)
@@ -285,10 +285,13 @@
     ?outgoing <- (Segment (destination ?dest))
     =>
     (add (new Datagram
-            "DATA"
-            ?*id*
-            ?dest))
-    (retract ?outgoing)
+            "DATA"					; Type of Datagram is "DATA"
+            ?*id*					; Our address
+            ?dest					; Destination address
+            ?outgoing ))			; Append our Battery Metric?
+    (retract ?outgoing)				; Remove the segment from our facts
     )
+	; Do we have to do an append or update in order for the next rule to catch
+	; this Datagram without a path
 
 (facts)
