@@ -80,6 +80,7 @@ public class Datagram {
 		source = pSource;
 		destination = pDestination;
 		segment = pSegment;
+		path = pPath;
 		batteryMetricValues = pBatteryMetricValues;
 		transmissionValues = new ArrayList<Integer>();
 	}

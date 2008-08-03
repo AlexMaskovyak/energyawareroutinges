@@ -29,6 +29,10 @@ public class TestSuite {
 		System.out.printf( "TEST 4:\n%s\n%s\n%s \n", "-----", TestRuleRREQ2(), "-----");
 		System.out.printf( "TEST 5:\n%s\n%s\n%s \n", "-----", TestRuleRREQ3(), "-----");
 		System.out.printf( "TEST 6:\n%s\n%s\n%s \n", "-----", TestRuleRREQ4(), "-----");
+		System.out.printf( "TEST 7:\n%s\n%s\n%s \n", "-----", TestRuleRREP1(), "-----");
+		System.out.printf( "TEST 8:\n%s\n%s\n%s \n", "-----", TestRuleRREP2(), "-----");
+		System.out.printf( "TEST 9:\n%s\n%s\n%s \n", "-----", TestRuleRREP3(), "-----");
+		//System.out.printf( "TEST 9:\n%s\n%s\n%s \n", "-----", TestRuleRREP3(), "-----");
 		
 //		System.out.println( "TEST 3:\t" + TestRuleRREQ2() );
 		
@@ -558,7 +562,7 @@ public class TestSuite {
 		
 		
 		// make sure that we are the source and they are the destination
-		results.append( "RREQ4: RREP's source is now our ID: " );
+		results.append( "RREQ4: RREQ's source is now us: " );
 		if (datagramFromNode.getSource() == agent.getID()) {
 			results.append( "PASSED\n" );
 		}
@@ -624,22 +628,226 @@ public class TestSuite {
 	/**
 	 * Test: RREP returns to original RREQer
 	 */
-	public void TestRuleRREQ5() {
+	public String TestRuleRREP1() {
 		// RrepAtSource
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		
+		int sourceBattery = 5;
+		int middleBattery = 6;
+		int destinationBattery = 7;
+		
+		Node node = Node.getInstance( source );
+		Agent agent = node.getAgent();
+		Rete engine = agent.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+					Datagram.RREP,
+					destination,
+					source);
+		
+		
+		ArrayList<Integer> path = TestSuite.makeList( destination, middle, source );
+		dg.setPath(path);
+		
+		ArrayList<Integer> batteryMetrics = 
+			TestSuite.makeList( destinationBattery, middleBattery, sourceBattery );
+		dg.setPath( batteryMetrics );
+		
+		
+		agent.receiveDatagram( dg, 10 );
+		
+		
+		
+		
+		// ensure that it was removed
+		results.append( "RREP1: RREP was removed from database: " );
+		if (!engine.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		// ensure that agent has a path from itself to destination
+		results.append( "RREP1: Agent has path from itself to destination: " );
+		ArrayList<Integer> revPath = 
+			TestSuite.makeList( source, middle, destination );
+		if (agent.hasPath( revPath )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		return results.toString();
 	}
 	
 	/**
 	 * Test: RREP and we are the next node in the path but not the destination
 	 */
-	public void TestRuleRREQ6() {
+	public String TestRuleRREP2() {
 		// ForwardRREP
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		
+		int sourceBattery = 4;
+		int middleBattery = 5;
+		int destinationBattery = 6;
+		
+		Node node = Node.getInstance( middle );
+		Agent agent = node.getAgent();
+		Rete engine = agent.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+					Datagram.RREP,
+					source,
+					destination);
+		
+		// add the routing path
+		ArrayList<Integer> path = TestSuite.makeList( source, middle, destination );
+		dg.setPath( path );
+		
+		// add the batteries so far
+		ArrayList<Integer> batteryMetrics = TestSuite.makeList( sourceBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		// give to agent
+		agent.receiveDatagram( dg, 10 );
+		
+		Datagram datagramFromNode = node.getLastFrameSent().getDatagram();
+		
+		// check the new datagram generated
+		// make sure that it is a rrep is being forwarded on
+		results.append( "RREP2: Response type is a forwarded RREP: " );
+		if (datagramFromNode.getType().equals(Datagram.RREP)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		// make sure that we are the source and they are the destination
+		results.append( "RREP2: RREP's source is now us: " );
+		if (datagramFromNode.getSource() == agent.getID()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREP2: New RREP's destination remains unchanged: " );		
+		if (datagramFromNode.getDestination() == dg.getDestination()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		results.append( "RREP2: New RREP's segment same as old RREP's segment: " );		
+		if (datagramFromNode.getSegment().equals(dg.getSegment())) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		// check to make sure the path remains unchanged
+		results.append( "RREP2: RREP's path remains unchanged: ");
+		if (datagramFromNode.getPath().equals(dg.getPath())) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		// check to make sure that there are two battery metrics 
+		results.append( "RREP2: Battery metrics cleared and current metric added: ");
+		ArrayList<Integer> rreqBatteryMetrics = 
+			TestSuite.makeList( 
+				sourceBattery, 
+				agent.getBatteryMetric() );
+		if (datagramFromNode.getBatteryMetricValues().equals(rreqBatteryMetrics)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		
+		// ensure that it was removed
+		results.append( "RREP2: RREP was removed from database: " );
+		if (!engine.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		return results.toString();
 	}
 	
 	/**
 	 * Test: RREP and we are not the next node in the path or the destination
 	 */
-	public void TestRuleRREQ7() {
+	public String TestRuleRREP3() {
 		// DropRREP
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		int bystander = 4;
+		
+		int sourceBattery = 4;
+		int middleBattery = 5;
+		int destinationBattery = 6;
+		
+		Node node = Node.getInstance( bystander );
+		Agent agent = node.getAgent();
+		Rete engine = agent.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+					Datagram.RREP,
+					source,
+					destination);
+
+		// add the path
+		ArrayList<Integer> path = TestSuite.makeList( source, middle, destination );
+		dg.setPath( path );
+		
+		// add the metrics so far
+		ArrayList<Integer> batteryMetrics = TestSuite.makeList( sourceBattery, middleBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		agent.receiveDatagram( dg, 10 );
+		
+		
+		
+		
+		// ensure that it was removed
+		results.append( "RREP3: RREP was removed from database: " );
+		if (!engine.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		return results.toString();
 	}
 	
 	/**
