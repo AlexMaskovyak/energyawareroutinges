@@ -54,7 +54,7 @@
 
 (deffunction isNextHopInPath (?src ?path)
     "Determine if id is after src in path"
-    
+    (= (call Frame getNextHopeInPath ?src ?path) ?*id*)
     )
 
 ; --- List of all rules used by processing in JESS ---
@@ -172,7 +172,8 @@
     )
 
 
-;Rule 5 
+; --- Rules for RREP ---
+; Rule 1 
 (defrule RrepAtSource
     "RREP returns to original RREQer"
     ?incoming <- (Datagram {type == "RREP"}{destination == ?*id*})
@@ -181,7 +182,7 @@
     (printout t "RREP received at Source" crlf)
     )
 
-; Rule 6
+; Rule 2
 (defrule ForwardRREP
     "RREP and we are the next node in the path but not the destination"
     ?dg <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src) (OBJECT ?incoming))
@@ -200,7 +201,7 @@
     (?*agent* sendDatagram ?response 10)
 	)
 
-; Rule 7
+; Rule 3
 (defrule DropRREP
     "RREP and we are not the next node in the path or the destination"
     ?dg <- (Datagram {type == "RREP"}{destination != ?*id*}(source ?src) (OBJECT ?incoming))
@@ -209,7 +210,7 @@
     (retract ?dg)
 	)
 
-;Rule 8
+;Rule 4
 (defrule SegmentForUs
     "Data type datagram arrived at final destination"
     ?incoming <- (Datagram {type == "DATA"}{destination == ?*id*} (segment ?segment))
@@ -218,7 +219,7 @@
     (?*agent* sendMessage ?segment)
     )
 
-; Rule 9
+; Rule 5
 (defrule ForwardReceivedDatagram
     "Data type datagram arrived at a midpoint along the path to destination."
     ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
@@ -236,7 +237,7 @@
     (?*agent* sendDatagram ?response 10)
     )
 
-; Rule 10
+; Rule 6
 (defrule DropDatagram
     "Data type datagram arrived that we overheard, we aren't the next hop in the path, so we drop it."
     ?incoming <- (Datagram {type == "DATA"} {destination != ?*id*} (source ?src))
