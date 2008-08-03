@@ -343,7 +343,18 @@ public class Agent{
 	}
 	
 	/**
-	 * Determine whether we currently have the path.
+	 * Determines whether we have any paths stored to reach the specified
+	 * destination.
+	 * @param pDestination
+	 * @return True if we have a path to the provided destination, false 
+	 * 			otherwise.
+	 */
+	public boolean hasPath( int pDestination ) {
+		return pathTable.hasPath( pDestination );
+	}
+	
+	/**
+	 * Determine whether we currently have the path specified.
 	 * @param pPath
 	 * @return
 	 */
@@ -395,6 +406,20 @@ public class Agent{
 		 */
 		public PathSet getPathSet( int pDestination ) {
 			return pathSetMap.get( pDestination );
+		}
+		
+		/**
+		 * Determines whether we have a path to the specified destination 
+		 * available for use.
+		 * @param pDestination
+		 * @return True if we have a path capable of reaching the provided
+		 * 			destination, false otherwise.
+		 */
+		public boolean hasPath( int pDestination ) {
+			if ( pathSetMap.get( pDestination ) == null ) {
+				return false;
+			}
+			return true;
 		}
 		
 		/**

@@ -41,9 +41,11 @@
     (?*agent* getBestPath ?destination)
     )
 
-(deffunction havePath (?destination)
+(deffunction hasPath (?destination)
     "Determine if there is a path to a destination"
-    "Returns true or false")
+    "Returns true or false"
+    (?*agent* hasPath ?destination)
+    )
 
 (deffunction isNovelRREQID (?rreqID)
     "Determine whether the rreq has been seen before."
@@ -117,11 +119,12 @@
 (defrule ShortCircuitRREQ
     "Receive a RREQ datagram and we already have a path."
     ?dg <- (Datagram {type == "RREQ"} {destination != ?*id*} (destination ?dest) (rreqID ?rreqID) (OBJECT ?incoming))
-    (test (<> (?incoming getDestination) ?*id*))
+    (test (<> ?dest ?*id*))
     (test (isNovelRREQID ?rreqID))
-    (test (havePath ?dest))
+    (test (hasPath ?dest))
     =>
     (?*agent* addRREQID ?rreqID)
+    
  	(bind ?pathSoFar (?incoming getPath))
     (bind ?restOfPath (getPath ?dest))
     (?*agent* mergePathsInMiddle ?pathSoFar ?restOfPath)
@@ -149,8 +152,10 @@
     ?dg <- (Datagram {type == "RREQ"}(destination ?dest)(rreqID ?rreqID) (OBJECT ?incoming))
     (test (<> ?dest ?*id*))
     (test (isNovelRREQID ?rreqID))
-    (not (test(havePath ?dest)))
+    (not ( test( hasPath ?dest)))
     =>
+    (?*agent* addRREQID ?rreqID)
+    
     (?incoming addToPath ?*id*)
     (?incoming addBatteryMetricValue (getBatteryMetric))
     (bind ?response (
@@ -159,7 +164,7 @@
             	?incoming.source 
             	?incoming.destination
             	?incoming.segment 
-            	(?incoming getPath)
+            	?incoming.path
             	(?incoming getBatteryMetricValues)))
     (retract ?dg)
     (?*agent* sendDatagram ?response 10)

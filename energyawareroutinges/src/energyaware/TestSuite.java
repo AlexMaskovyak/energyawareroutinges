@@ -28,6 +28,7 @@ public class TestSuite {
 		System.out.printf( "TEST 3:\n%s\n%s\n%s \n", "-----", TestRuleRREQ1(), "-----");
 		System.out.printf( "TEST 4:\n%s\n%s\n%s \n", "-----", TestRuleRREQ2(), "-----");
 		System.out.printf( "TEST 5:\n%s\n%s\n%s \n", "-----", TestRuleRREQ3(), "-----");
+		System.out.printf( "TEST 6:\n%s\n%s\n%s \n", "-----", TestRuleRREQ4(), "-----");
 		
 //		System.out.println( "TEST 3:\t" + TestRule3() );
 //		System.out.println( "TEST 4:\t" + Test4() );
@@ -491,8 +492,129 @@ public class TestSuite {
 	 * Test: Forward a RREQ datagram for which we have no path and is not
 	 * addressed to us.
 	 */
-	public void TestRuleRREQ4() {
+	public String TestRuleRREQ4() {
 		// ForwardRREQ
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		
+		int sourceBattery = 5;
+
+		int RREQID = 1;
+		
+		Node node = Node.getInstance( middle );
+		Agent agent = node.getAgent();
+		Rete engine = agent.getEngine();
+		
+		
+		Datagram dg = 
+			new Datagram(
+				Datagram.RREQ,
+				source,
+				destination);
+		
+		// add path
+		ArrayList<Integer> path = TestSuite.makeList( source );
+		dg.setPath(path);
+		
+		// add batteries
+		ArrayList<Integer> batteryMetrics = TestSuite.makeList( sourceBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		// add rreqid
+		dg.setRreqID( RREQID );
+
+		
+		agent.receiveDatagram( dg, 10 );
+		
+		
+		// ensure that the rreq id was added to our table
+		results.append( "RREQ4: RREQ ID was added to our table: " );
+		if (!agent.isNovelRREQID( RREQID )) {
+			results.append( "PASSED\n" ); 
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		
+		Datagram datagramFromNode = node.getLastFrameSent().getDatagram();
+		
+		// make sure that it is a rreq is being forwarded on
+		results.append( "RREQ4: Response type is a forwarded RREQ: " );
+		if (datagramFromNode.getType().equals(Datagram.RREQ)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		
+		// make sure that we are the source and they are the destination
+		results.append( "RREQ4: RREP's source is now our ID: " );
+		if (datagramFromNode.getSource() == agent.getID()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ4: New RREQ's destination remains unchanged: " );		
+		if (datagramFromNode.getDestination() == dg.getDestination()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ4: New RREQ's segment same as old RREQ's segment: " );		
+		if (datagramFromNode.getSegment().equals(dg.getSegment())) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		
+		// check to make sure the new concatenated path is correct
+		results.append( "RREQ4: RREQ's path has been updated: ");
+		ArrayList<Integer> newPath = TestSuite.makeList( source, middle );
+		if (datagramFromNode.getPath().equals(newPath)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		// check to make sure that there are two battery metrics 
+		results.append( "RREQ4: Battery metrics cleared and current metric added: ");
+		ArrayList<Integer> rreqBatteryMetrics = 
+			TestSuite.makeList( 
+				sourceBattery, 
+				agent.getBatteryMetric() );
+		if (datagramFromNode.getBatteryMetricValues().equals(rreqBatteryMetrics)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		// ensure that it was removed
+		results.append( "RREQ4: RREQ was removed from database: " );
+		if (!engine.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		
+		return results.toString();
 	}
 	
 	/**

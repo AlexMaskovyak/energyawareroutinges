@@ -13,6 +13,8 @@ public class Frame {
 	protected int source;
 	protected int destination;
 	
+	public static final int BROADCASTFRAME = -1;
+	
 	/**
 	 * Default constructor.
 	 * @param pDatagram
@@ -20,7 +22,13 @@ public class Frame {
 	public Frame(Datagram pDatagram) {
 		setDatagram(pDatagram);
 		setSource(pDatagram.getSource());
-		destination = Frame.getNextHopInPath(source, datagram.getPath());
+		
+		if (!pDatagram.getType().equals(Datagram.RREQ)) {
+			destination = Frame.getNextHopInPath(source, datagram.getPath());
+		}
+		
+		// if the type is a RREQ, this is a broadcast frame
+		destination = Frame.BROADCASTFRAME;
 	}
 	
 	/**
@@ -87,7 +95,6 @@ public class Frame {
 		}
 		
 		int ourPosition = path.indexOf(source);
-		
 		
 		int nextHopPosition = ourPosition + 1;
 		
