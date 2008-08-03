@@ -3,10 +3,12 @@ package energyaware;
 import jess.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -242,9 +244,6 @@ public class Agent{
 	
 	
 	
-
-
-	// --------------------------------------- ADDED BY JEFF
 	/**
 	 * Evaluates the best path to a given destination node.
 	 * 
@@ -343,8 +342,6 @@ public class Agent{
 		rreqIDs.remove(pID);
 	}
 	
-	// --------------------------------------- END OF ADDED BY JEFF
-	
 	////
 	////
 	//// Path related storage and maintenance.
@@ -355,8 +352,75 @@ public class Agent{
 	 * Add the provided path to the list of paths.
 	 * @param pPath Path to add to the list of paths.
 	 */
+	@SuppressWarnings("unchecked")
 	public void updatePathTable( ArrayList<Integer> pPath ){
-		pathTable.addPath(pPath);
+		
+		updatePathTable( pPath, node.getID() );
+	}
+	
+	/**
+	 * Add the provided path to the list of paths from a "source".
+	 * If the source is not us, then we have learned of paths from another node's
+	 * datagram while we were eavesdropping on other  
+	 */
+	public void updatePathTable( ArrayList<Integer> pPath, int pSource ) {
+		
+		int us = node.getID();
+		
+		// We are either the beginning, somewhere in the middle or the end
+		if( pPath.size() > 1 ) { // At least two nodes needed to be a path
+			
+			// Find our position in the list
+			ListIterator<Integer> it = pPath.listIterator();
+			
+			// Add all forward looking paths
+			ArrayList<Integer> newPath = new ArrayList<Integer>();
+			
+			// Find our id in the list
+			while( it.hasNext() ) {
+				if( pSource == it.next() ) {	// Are we the intended source?
+					if( pSource == us ) {
+						newPath.add(us);
+						break;
+					}
+					else {	// We assume a path to the intended source
+						newPath.add( us );
+						newPath.add( pSource );
+						pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
+						break;
+					}
+				}
+			}
+			
+			// Build sub paths from our ID to the end of the path list
+			while( it.hasNext() ) {
+				newPath.add( it.next() );	// Append a new destination
+				pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
+			}
+			
+			// Move iterator back to our ID in the list
+			while( it.hasPrevious() ) {
+				if( pSource == it.previous() ) {	// Are we the intended source?
+					if( pSource == us ) {
+						newPath.add(us);
+						break;
+					}
+					else {	// We assume a path to the intended source
+						newPath.add( us );
+						newPath.add( pSource );
+						pathTable.addPath( newPath );
+						break;
+					}
+				}
+			}
+			
+			// Build all reverse sub paths
+			while( it.hasPrevious() ) {
+				newPath.add( it.previous() );
+				pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
+			}
+			
+		}
 	}
 	
 	/**
@@ -401,10 +465,16 @@ public class Agent{
 	
 	
 	/**
+	 * Allows access to an internal object.
+	 */
+	public PathTable getPathTable() {
+		return pathTable;
+	}
+	
+	/**
 	 * Holds an association: destinations have a pathset of paths which can be
 	 * used to route on the network.
 	 * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
-	 *
 	 */
 	private class PathTable {
 		
@@ -433,6 +503,7 @@ public class Agent{
 		 * 			destination, false otherwise.
 		 */
 		public boolean hasPath( int pDestination ) {
+			
 			if ( pathSetMap.get( pDestination ) == null ) {
 				return false;
 			}
@@ -489,6 +560,10 @@ public class Agent{
 			}
 		}
 		
+		public String toString() {
+			return pathSetMap.toString();
+		}
+		
 		/**
 		 * Simple wrapper for an array-list of a path.
 		 * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
@@ -528,6 +603,16 @@ public class Agent{
 			 */
 			public void removePath( ArrayList<Integer> pPath ) {
 				paths.remove( pPath );
+			}
+			
+			/**
+			 * Added for special purpose testing
+			 * 
+			 * @return The contents of Path Set
+			 */
+			public String toString() {
+				
+				return paths.toString();
 			}
 		}
 	}
