@@ -267,7 +267,7 @@
 (defrule ForwardOurDatagram
     "Data type datagram was created from a segment and must be sent out."
     ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
-    (test (havePath ?dest))
+    (test (hasPath ?dest))
     =>
     (?outgoing addBatteryMetricValue (getBatteryMetric))
     (?outgoing setPath (getPath ?dest))
@@ -280,7 +280,7 @@
 (defrule CreateRREQForDatagram
     "Data type datagram was created from a segment, but we need a path first.  We want to keep this datagram until we get the response."
     ?outgoing <- (Datagram {type == "DATA"} {source == ?*id*} (destination ?dest))
-	(not (test (havePath ?dest)))
+	(not (test (hasPath ?dest)))
     =>
     (bind ?response (
             new Datagram
