@@ -249,7 +249,12 @@ public class Agent{
 
 
 	// --------------------------------------- ADDED BY JEFF
-	
+	/**
+	 * Evaluates the best path to a given destination node.
+	 * 
+	 * @param pDestination The destination node.
+	 * @return The path path.
+	 */
 	public List<Integer> getBestPath( int pDestination ) {
 		
 		Iterator<ArrayList<Integer>> it = pathTable.getPathSet( pDestination ).paths.iterator();
@@ -267,13 +272,24 @@ public class Agent{
 				
 				comparePath = it.next();
 				compareCost = getCost( comparePath.iterator() );
-				comparePath = null;
+
+				// See if another path has a lower cost
+				if( compareCost < bestCost ) {
+					bestPath = comparePath;
+					bestCost = compareCost;
+				}
 			}
 		}
 		
 		return bestPath;
 	}
 	
+	/**
+	 * Calculate the cost of a given path.
+	 * 
+	 * @param pIt An iterator for a node list (path).
+	 * @return The path's cost.
+	 */
 	private int getCost( Iterator<Integer> pIt ) {
 		
 		int value, start, next;
@@ -286,11 +302,16 @@ public class Agent{
 				
 				// Battery Metric * Transmission Cost
 				value += getBatteryMetrics(next) * getTransmissionCost( start, next);
+				start = next;
 			}
 		}
-		catch( Exception e ) {
+		catch( Exception e ) { // When we don't have a cost between nodes
 			value = Integer.MAX_VALUE;
 		}
+		
+		// All paths must have a cost associated otherwise we use Infinity
+		if( value == 0 )
+			value = Integer.MAX_VALUE;
 		
 		return value;
 	}
