@@ -27,6 +27,8 @@ public class TestSuite {
 		System.out.printf( "TEST 2:\n%s\n%s\n%s \n", "-----", TestRuleUniversal1(), "-----");
 		System.out.printf( "TEST 3:\n%s\n%s\n%s \n", "-----", TestRuleRREQ1(), "-----");
 		System.out.printf( "TEST 4:\n%s\n%s\n%s \n", "-----", TestRuleRREQ2(), "-----");
+		System.out.printf( "TEST 5:\n%s\n%s\n%s \n", "-----", TestRuleRREQ3(), "-----");
+		
 //		System.out.println( "TEST 3:\t" + TestRule3() );
 //		System.out.println( "TEST 4:\t" + Test4() );
 //		System.out.println( "TEST 5:\t" + Test5() );
@@ -356,8 +358,133 @@ public class TestSuite {
 	/**
 	 * Test: We have receive a RREQ datagram and we already have its path.
 	 */
-	public void TestRuleRREQ3() {
+	public String TestRuleRREQ3() {
 		// ShortCircuitRREQ
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		
+		int sourceBattery = 5;
+		
+		int RREQID = 1;
+		
+		Node node = Node.getInstance( middle );
+		Agent agent = node.getAgent();
+		Rete engine = agent.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+				Datagram.RREQ,
+				source,
+				destination);
+		
+		// set segment
+		Segment segment = new Segment();
+		dg.setSegment( segment );
+		
+		// add path
+		ArrayList<Integer> path = TestSuite.makeList( source, middle );
+		dg.setPath( path );
+		
+		// add batteries
+		ArrayList<Integer> batteryMetrics = 
+			TestSuite.makeList( sourceBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		dg.setRreqID( RREQID );
+		
+		// give our agent a path to the destination to perform short-circuiting
+		ArrayList<Integer> existingPath = 
+			TestSuite.makeList( middle, destination );
+		agent.updatePathTable( existingPath );
+
+		
+		agent.receiveDatagram( dg, 10 );
+		
+		
+		// ensure that the rreq id was added to our table
+		results.append( "RREQ3: RREQ ID was added to our table: " );
+		if (!agent.isNovelRREQID( RREQID )) {
+			results.append( "PASSED\n" ); 
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		
+		Datagram datagramFromNode = node.getLastFrameSent().getDatagram();
+		
+		
+		// make sure that it is a rrep being sent
+		results.append( "RREQ3: Response type is RREP: " );
+		if (datagramFromNode.getType().equals(Datagram.RREP)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		// make sure that we are the source and they are the destination
+		results.append( "RREQ3: RREP's source is now our ID: " );
+		if (datagramFromNode.getSource() == agent.getID()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ3: RREP's destination is now the RREQ's source value: " );		
+		if (datagramFromNode.getDestination() == dg.getSource()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ3: RREP's segment same as RREQ's segment: " );		
+		if (datagramFromNode.getSegment().equals(dg.getSegment())) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		
+		// check to make sure the new concatenated path is correct
+		results.append( "RREQ3: RREP has the full reverse path from the destination to the source: ");
+		ArrayList<Integer> revPath = TestSuite.makeList( destination, middle, source );
+		if (datagramFromNode.getPath().equals(revPath)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		// check to make sure that the only battery metric is ours
+		results.append( "RREQ3: Battery metrics cleared and current metric added: ");
+		ArrayList<Integer> revBatteryMetrics = TestSuite.makeList( agent.getBatteryMetric() );
+		if (datagramFromNode.getBatteryMetricValues().equals(revBatteryMetrics)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		// ensure that it was removed
+		results.append( "RREQ3: RREQ was removed from database: " );
+		if (!engine.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		
+		
+		return results.toString();
 	}
 	
 	/**

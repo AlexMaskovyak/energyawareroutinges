@@ -38,10 +38,7 @@
 
 (deffunction getPath (?destination)
     "Return the best path to a given destination"
-    (bind ?path (new ArrayList))
-    (?path add 1)
-    (?path add 789)
-    ?path
+    (?*agent* getBestPath ?destination)
     )
 
 (deffunction havePath (?destination)
@@ -124,9 +121,10 @@
     (test (isNovelRREQID ?rreqID))
     (test (havePath ?dest))
     =>
+    (?*agent* addRREQID ?rreqID)
  	(bind ?pathSoFar (?incoming getPath))
     (bind ?restOfPath (getPath ?dest))
-    (?pathSoFar addAll ?restOfPath)
+    (?*agent* mergePathsInMiddle ?pathSoFar ?restOfPath)
 
     (bind ?fullPath ?pathSoFar)
     (bind ?revBestPath (call Datagram reverse ?fullPath))
