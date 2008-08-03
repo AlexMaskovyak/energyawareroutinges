@@ -50,6 +50,23 @@ public class Datagram {
 	}
 	
 	/**
+	 * Create a new datagram with type, source, destination and Segment values.
+	 * Set up objects.
+	 * 
+	 * @param pType
+	 * @param pSource
+	 * @param pDestination
+	 * @param pSegment
+	 */
+	public Datagram ( String pType, int pSource, int pDestination,
+			Segment pSegment ) {
+		type = pType;
+		source = pSource;
+		destination = pDestination;
+		segment = pSegment;
+	}
+	
+	/**
 	 * 
 	 * @param pType
 	 * @param pSource

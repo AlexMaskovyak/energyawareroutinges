@@ -30,11 +30,8 @@ public class TestSuite {
 		System.out.printf( "TEST 5:\n%s\n%s\n%s \n", "-----", TestRuleRREQ3(), "-----");
 		System.out.printf( "TEST 6:\n%s\n%s\n%s \n", "-----", TestRuleRREQ4(), "-----");
 		
-//		System.out.println( "TEST 3:\t" + TestRule3() );
-//		System.out.println( "TEST 4:\t" + Test4() );
-//		System.out.println( "TEST 5:\t" + Test5() );
-//		System.out.println( "TEST 6:\t" + Test6() );
-//		System.out.println( "TEST 7:\t" + Test7() );
+//		System.out.println( "TEST 3:\t" + TestRuleRREQ2() );
+		
 		}
 		catch( JessException e ) {
 			e.printStackTrace();
@@ -46,8 +43,11 @@ public class TestSuite {
 	 * ========== A listing of Test conditions for our JESS rules =========
 	 */
 	
-	// 
+	/**
+	 * Test: We need access to an Agent and its ID in JESS
+	 */
 	public String TestRuleInit1() throws JessException {
+		// setAgent
 		StringBuilder results = new StringBuilder();
 		
 		Node node1 = Node.getInstance( 1 );
@@ -83,7 +83,11 @@ public class TestSuite {
 		return results.toString();
 	}
 	
+	/**
+	 * Test: Extracts the Battery Metric, Path & Transmission Cost from a datagram.
+	 */
 	public String TestRuleUniversal1() throws JessException {
+		// ExtractTransmissionCost
 		StringBuilder results = new StringBuilder();
 		
 		int source = 1;
@@ -678,8 +682,21 @@ public class TestSuite {
 	/**
 	 * Test: Segment received, create a datagram without path information.
 	 */
-	public void TestRuleRREQ13() {
-		// ReceiveSegmentFromUser
+	public void TestRuleRREQ13() { // ReceiveSegmentFromUser
+		
+		int source = 1, destination = 2;
+		Node node = Node.getInstance( source );
+		Message message = new Message("Hi Guys!");
+		
+		// Tell node it has a message to send
+		node.sendMessage(message, destination );
+		
+//		Datagram dg = new Datagram("DATA",source,destination,message);
+		// Determine if the node made a Datagram
+		// make sure we have a datagram in there
+//		if ( engine.containsObject( dg ) ) {
+//			results.append( "UR1: Datagram inserted properly.\n" );
+//		}
 	}
 
 }
