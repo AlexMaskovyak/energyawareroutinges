@@ -152,14 +152,10 @@ public class Agent{
 		
 			engine.add(pDatagram);
 			engine.run();
-			
-			for (Iterator it = engine.listFacts(); it.hasNext();) {
-				System.out.println(it.next());
-			}
+		}
 //		for( Iterator it = engine.listDefglobals(); it.hasNext(); ) {
 //			System.out.println( it.next() );
 //		}
-		}
 		catch( JessException e ) {
 			e.printStackTrace();
 		}
@@ -473,7 +469,7 @@ public class Agent{
 			if ( pathSet != null ){	//destination already exists in map
 				pathSet.addPath( pPath );
 			} 
-			else {				// destination does not exist yest
+			else {				// destination does not exist yet
 				PathSet tempSet = new PathSet();
 				tempSet.addPath( pPath );
 				pathSetMap.put( dest, tempSet );

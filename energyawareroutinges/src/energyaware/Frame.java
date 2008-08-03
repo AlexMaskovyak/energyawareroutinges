@@ -90,10 +90,6 @@ public class Frame {
 	 * @return
 	 */
 	public static int getNextHopInPath(int source, List<Integer> path) {
-		for (int i : path) {
-			System.out.printf("Path: %d\n", i);
-		}
-		
 		int ourPosition = path.indexOf(source);
 		
 		int nextHopPosition = ourPosition + 1;

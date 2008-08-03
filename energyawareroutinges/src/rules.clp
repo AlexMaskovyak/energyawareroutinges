@@ -54,7 +54,7 @@
 
 (deffunction isNextHopInPath (?src ?path)
     "Determine if id is after src in path"
-    (= (call Frame getNextHopeInPath ?src ?path) ?*id*)
+    (= (call Frame getNextHopInPath ?src ?path) ?*id*)
     )
 
 ; --- List of all rules used by processing in JESS ---
@@ -164,7 +164,8 @@
     (bind ?response (
             new Datagram 
             	"RREQ" 
-            	?incoming.source 
+            	;?incoming.source 
+            	?*id*
             	?incoming.destination
             	?incoming.segment 
             	?incoming.path
@@ -198,10 +199,10 @@
     (bind ?response (
             new Datagram 
             	"RREP" 
-            	?incoming.source 
+            	?*id* ;?incoming.source 
             	?incoming.destination
             	?incoming.segment 
-            	(?incoming getPath)
+            	?incoming.path
             	(?incoming getBatteryMetricValues)))
     (retract ?dg)
     (?*agent* sendDatagram ?response 10)
