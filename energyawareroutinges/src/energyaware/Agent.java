@@ -246,28 +246,7 @@ public class Agent{
 	
 	
 	
-	////
-	////
-	//// Path related storage and maintenance.
-	////
-	////
-	
-	/**
-	 * Add the provided path to the list of paths.
-	 * @param pPath Path to add to the list of paths.
-	 */
-	public void updatePathTable( ArrayList<Integer> pPath ){
-		pathTable.addPath(pPath);
-	}
-	
-	/**
-	 * Determine whether we currently have the path.
-	 * @param pPath
-	 * @return
-	 */
-	public boolean hasPath( ArrayList<Integer> pPath ) {
-		return pathTable.hasPath( pPath );
-	}
+
 
 	// --------------------------------------- ADDED BY JEFF
 	
@@ -348,6 +327,50 @@ public class Agent{
 	}
 	
 	// --------------------------------------- END OF ADDED BY JEFF
+	
+	////
+	////
+	//// Path related storage and maintenance.
+	////
+	////
+	
+	/**
+	 * Add the provided path to the list of paths.
+	 * @param pPath Path to add to the list of paths.
+	 */
+	public void updatePathTable( ArrayList<Integer> pPath ){
+		pathTable.addPath(pPath);
+	}
+	
+	/**
+	 * Determine whether we currently have the path.
+	 * @param pPath
+	 * @return
+	 */
+	public boolean hasPath( ArrayList<Integer> pPath ) {
+		return pathTable.hasPath( pPath );
+	}
+	
+	/**
+	 * Merges two paths together so that shared nodes that appear at the end
+	 * of the first segment and at the beginning of the second segment are 
+	 * merged.  The first segment will have its trailing ID removed and then
+	 * have all elements of the second segment added to it.
+	 * @param pFirstSegment
+	 * @param pSecondSegment
+	 * @return
+	 */
+	public ArrayList<Integer> mergePathsInMiddle( 
+			ArrayList<Integer> pFirstSegment, 
+			ArrayList<Integer> pSecondSegment) {		
+		
+		int positionOfRedundantNode = pFirstSegment.size() - 1;
+		pFirstSegment.remove(positionOfRedundantNode);
+		pFirstSegment.addAll(pSecondSegment);
+		
+		return pFirstSegment;
+	}
+	
 	
 	/**
 	 * Holds an association: destinations have a pathset of paths which can be
