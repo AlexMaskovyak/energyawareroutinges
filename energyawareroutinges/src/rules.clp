@@ -50,6 +50,7 @@
 
 (deffunction isNovelRREQID (?rreqID)
     "Determine whether the rreq has been seen before."
+    (?*agent* isNovelRREQID ?rreqID)
     )
 
 (deffunction isNextHopInPath (?src ?path)
@@ -101,8 +102,7 @@
             	?revpath 
             	(getBatteryMetric)
             	))
-
-    (undefinstance ?incoming)
+	(undefinstance ?incoming)
     (?*agent* sendDatagram ?response 10)   
     (printout t "RREQ-RREP Fired" crlf))  
     
@@ -120,7 +120,7 @@
 (defrule ShortCircuitRREQ
     "Receive a RREQ datagram and we already have a path."
     ?dg <- (Datagram {type == "RREQ"} {destination != ?*id*} (destination ?dest) (rreqID ?rreqID) (OBJECT ?incoming))
-    ;(test (<> (?incoming getDestination) ?*id*))
+    (test (<> (?incoming getDestination) ?*id*))
     (test (isNovelRREQID ?rreqID))
     (test (havePath ?dest))
     =>

@@ -73,4 +73,14 @@ public class Segment {
 		
 		destination = pDestination;
 	}
+	
+	public boolean equals( Object o ) {
+		if ( !(o instanceof Segment)) {
+			return false;
+		}
+		return 
+			(getDestination() == ((Segment)o).getDestination()) &&
+			(getMessage() == ((Segment)o).getMessage());
+	}
+	
 }

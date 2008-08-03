@@ -25,7 +25,8 @@ public class TestSuite {
 			
 		System.out.printf( "TEST 1:\n%s\n%s\n%s \n", "-----", TestRuleInit1(), "-----");
 		System.out.printf( "TEST 2:\n%s\n%s\n%s \n", "-----", TestRuleUniversal1(), "-----");
-		
+		System.out.printf( "TEST 3:\n%s\n%s\n%s \n", "-----", TestRuleRREQ1(), "-----");
+		System.out.printf( "TEST 4:\n%s\n%s\n%s \n", "-----", TestRuleRREQ2(), "-----");
 //		System.out.println( "TEST 3:\t" + TestRule3() );
 //		System.out.println( "TEST 4:\t" + Test4() );
 //		System.out.println( "TEST 5:\t" + Test5() );
@@ -56,16 +57,24 @@ public class TestSuite {
 		
 		Object ob = val.javaObjectValue( context );
 		
+		results.append("TRI1: Agent assignment: ");
 		if( node1.getAgent() != ob ) {
-			results.append("TRI1: Agent assigned\n");
+			results.append("PASSED\n");
+		}
+		else {
+			results.append("FAILED\n");
 		}
 		
 		dg = engine.findDefglobal("*id*");
 		val = dg.getInitializationValue();
 		ob = val.javaObjectValue(context);
 		
+		results.append("TRI1: ID assignment: ");
 		if( ((Integer) ob ).intValue() == 1 && ((Integer) ob).intValue() == node1.getID() ) {
-			results.append("TRI1: ID assigned\n");
+			results.append("PASSED\n");
+		}
+		else {
+			results.append("FAILED\n");
 		}
 		
 		return results.toString();
@@ -113,18 +122,27 @@ public class TestSuite {
 		agent.receiveDatagram( dg, 10 );
 		
 		
-		
 		// make sure we have a datagram in there
+		results.append( "UR1: Datagram inserted in database: ");
 		if ( engine.containsObject( dg ) ) {
-			results.append( "UR1: Datagram inserted properly.\n" );
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
 		}
 		
+		
 		// check our path
+		results.append( "UR1: Path added to PathTable: " );
 		if ( agent.hasPath( path ) ) {
-			results.append( "UR1: Path succesfully added to table.\n" );
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
 		}
 		
 		// check battery metrics
+		results.append( "UR1: BatteryMetrics stored in database: ");
 		boolean batteryOK = true;
 		for ( int i = 0; i < batteryMetrics.size(); ++i) {
 			if (agent.getBatteryMetrics( path.get( i ) ) != batteryMetrics.get( i ) ) {
@@ -132,10 +150,14 @@ public class TestSuite {
 			}
 		}
 		if ( batteryOK ) {
-			results.append( "UR1: Battery metrics successfully added.\n" );
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
 		}
 		
 		// check our transmission cost
+		results.append( "UR1: Transmission costs stored in database: ");
 		boolean transCostOK = true;
 		for ( int i = 0; i < transmissionCosts.size() - 1; ++i) {
 			int agentsCost = 
@@ -143,13 +165,15 @@ public class TestSuite {
 			int origCost = transmissionCosts.get( i );
 				
 			if (agentsCost != origCost) {
-				System.out.printf("agentsCost: %d origCost: %d\n", agentsCost, origCost);
 				transCostOK = false;
 			}
 		}
 		
 		if ( transCostOK ) {
-			results.append( "UR1: Transmission metrics successfully added.\n" );
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n ");
 		}
 		
 		return results.toString();
@@ -176,16 +200,157 @@ public class TestSuite {
 	 * Test: A RREQ Datagram arrives at the destination and a RREP Datagram is
 	 * sent back.
 	 */
-	public void TestRuleRREQ1() {
+	public String TestRuleRREQ1() {
 		// RREQtoRREP
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+
+		int sourceBattery = 4;
+		int middleBattery = 5;
+		int destinationBattery = 6;
+		
+		int firstLink = 5;
+		int secondLink = 10;
+
+		
+		Node node1 = Node.getInstance( destination );
+		Agent agent1 = node1.getAgent();
+		Rete engine1 = agent1.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+				Datagram.RREQ,
+				source,
+				destination);
+	
+		// set segment
+		Segment segment = new Segment();
+		dg.setSegment( segment );
+		
+		// add path
+		ArrayList<Integer> path = TestSuite.makeList( source, middle );
+		dg.setPath( path );
+		
+		// add batteries
+		ArrayList<Integer> batteryMetrics = 
+			TestSuite.makeList( sourceBattery, middleBattery, destinationBattery );
+		dg.setBatteryMetricValues( batteryMetrics );
+		
+		// transmission costs
+		ArrayList<Integer> transmissionCosts =
+			TestSuite.makeList( firstLink, secondLink );
+		dg.setTransmissionValues( transmissionCosts );
+	
+		
+		agent1.receiveDatagram( dg, 10 );
+		
+		
+		Datagram datagramFromNode = node1.getLastFrameSent().getDatagram();
+		
+		results.append( "RREQ1: Response type is RREP: " );
+		if (datagramFromNode.getType().equals(Datagram.RREP)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: RREP's source is now the RREQ's destination value: " );
+		if (datagramFromNode.getSource() == dg.getDestination()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: RREP's destination is now the RREQ's source value: " );		
+		if (datagramFromNode.getDestination() == dg.getSource()) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: RREP's segment same as RREQ's segment: " );		
+		if (datagramFromNode.getSegment().equals(dg.getSegment())) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: RREP's path correctly reversed RREQ's path: " );		
+		ArrayList<Integer> revPath = TestSuite.makeList( destination, middle, source );
+		if (datagramFromNode.getPath().equals(revPath)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: Battery metrics cleared and current metric added: ");
+		ArrayList<Integer> revBatteryMetrics = TestSuite.makeList( agent1.getBatteryMetric() );
+		if (datagramFromNode.getBatteryMetricValues().equals(revBatteryMetrics)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "RREQ1: Original RREQ removed from database: " );
+		if (!engine1.containsObject( dg )) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		return results.toString();
 	}
 	
 	/**
 	 * Test: We have received a RREQ for which we are not the destination and
 	 * the RREQ_ID is not new.
 	 */
-	public void TestRuleRREQ2() {
+	public String TestRuleRREQ2() {
 		// NonNovelRREQID
+		StringBuilder results = new StringBuilder();
+		
+		int source = 1;
+		int middle = 2;
+		int destination = 3;
+		
+		int RREQID = 1;
+		
+		Node node = Node.getInstance( middle );
+		Agent agent = node.getAgent();
+		agent.addRREQID( RREQID );
+		
+		Rete engine = agent.getEngine();
+		
+		Datagram dg = 
+			new Datagram(
+					Datagram.RREQ,
+					source, 
+					destination);
+		
+		dg.setRreqID( RREQID );
+		
+		agent.receiveDatagram( dg, 10 );
+		
+		
+		results.append( "RREQ2: Datagram was dropped as redundant: ");
+		if (!engine.containsObject(dg)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		return results.toString();
 	}
 	
 	/**
