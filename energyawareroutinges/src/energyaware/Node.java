@@ -27,13 +27,21 @@ public class Node {
 	}
 	
 	/**
-	 * Constructor that takes parameters in case you never saw Java before
+	 * Constructor that only takes an ID.
 	 */
 	private Node( int pId ) {
 		ID = pId;
 		battery = new Battery( STARTINGBATTERYLEVEL, STARTINGBATTERYLEVEL );
 	}
 	
+	/**
+	 * Node factory method.  Automatically creates a node with the given ID and
+	 * sets its agent.  A factory is used to allow for reference assignment
+	 * right after creation.
+	 * 
+	 * @param pId The specified ID for this node.
+	 * @return A fully functional Node with an integrated Agent.
+	 */
 	public static Node getInstance( int pId ) {
 		
 		Node node = null;
@@ -51,8 +59,9 @@ public class Node {
 	}
 	
 	/**
-	 * Gets the agent working at this node.
-	 * @return The agent.
+	 * Gets the agent running at this node.
+	 * 
+	 * @return The node's agent.
 	 */
 	public Agent getAgent() {
 		return agent;
@@ -61,6 +70,7 @@ public class Node {
 	/**
 	 * Set the agent to work at this node.  Also ensures that this agent has an
 	 * updated reference to this node.
+	 * 
 	 * @param pAgent An agent.
 	 */
 	public void setAgent( Agent pAgent ) {
@@ -76,6 +86,7 @@ public class Node {
 	
 	/**
 	 * Get the battery installed in this node.
+	 * 
 	 * @return Battery installed in this node.
 	 */
 	public Battery getBattery() {
@@ -84,6 +95,7 @@ public class Node {
 	
 	/**
 	 * Install a battery into this node.
+	 * 
 	 * @param pBattery Battery to install into this node.
 	 */
 	public void setBattery(Battery pBattery) {
@@ -93,6 +105,7 @@ public class Node {
 	/**
 	 * 
 	 * Returns this Node's network ID.
+	 * 
 	 * @return This Node's assigned network ID.
 	 */
 	public int getID() {
@@ -101,6 +114,7 @@ public class Node {
 	
 	/**
 	 * Sets this Node's network ID.
+	 * 
 	 * @param pID Network ID to assign to this Node.
 	 */
 	public void setID(int pID) {
@@ -109,6 +123,7 @@ public class Node {
 	
 	/**
 	 * Retrieves the last frame that was sent by this node.
+	 * 
 	 * @return Last frame sent by this node, null otherwise.
 	 */
 	public Frame getLastFrameSent() {
@@ -117,6 +132,7 @@ public class Node {
 	
 	/**
 	 * Get a reference to the network to which this Node belongs.
+	 * 
 	 * @return Reference to the network.
 	 */
 	public Network getNetwork() {
@@ -125,37 +141,36 @@ public class Node {
 	
 	/**
 	 * Set the reference to the network to which this Node belongs.
+	 * 
 	 * @param pNetwork Reference to network with which we belong/communicate.
 	 */
 	public void setNetwork(Network pNetwork) {
 		network = pNetwork;
 	}
 	
+	///
+	///
+	/// Hooks for the datalink layer and the network object
+	///
+	///
 	
-	
-	public void run() {
-	}
-	
-	public void stop() {
-		
-	}
-	
-	
-	/// hooks for the datalink layer and the network object
 	/**
 	 * Receive a from another node on the network.  This simulates the datalink
 	 * layer.
-	 * @param pDatagram Datagram received.
+	 * 
+	 * @param pFrame A frame to be received.
+	 * @param pTransmissionDistance The distance this frame was transmitted.
 	 */
 	public void receiveFrame(Frame pFrame, int pTransmissionDistance) {
 		agent.receiveDatagram(pFrame.getDatagram(), pTransmissionDistance );
 	}
 	
 	/**
-	 * Send the frame to the network.
+	 * Sends the frame to the network.
+	 * 
 	 * @param pFrame Frame to broadcast onto the network.
 	 * @param pTransmissionDistance Transmission distance which affects the 
-	 * 			amount of power we use to send this frame.
+	 *        amount of power we use to send this frame.
 	 */
 	public void sendFrame(Frame pFrame, int pTransmissionDistance) {
 		lastFrameSent = pFrame;
@@ -166,7 +181,6 @@ public class Node {
 		}
 		System.out.println("Sending frame...");
 	}
-	
 	
 	/**
 	 * Receive a message from the stack and pass to the "application."

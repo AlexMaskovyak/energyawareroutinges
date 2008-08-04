@@ -7,27 +7,27 @@ import java.util.ArrayList;
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  * @version July 2008
  * 
- * A datagram is the data encapsulation used to hold a segment and is exchanged between
- * the Network and Datalink layers.  A datagram has 5 fields for type, source address,
- * destination address, path list and battery metric list.
+ * A datagram is the data encapsulation used to hold a segment and is exchanged
+ * between the Network and Datalink layers.  A datagram has 5 fields for type,
+ * source address, destination address, path list and battery metric list.
  */
 public class Datagram {
 	
-	public static final String RREQ = "RREQ";	// Represents a RREQ message type
-	public static final String RREP = "RREP";	// Represents a RREP message type
-	public static final String RERR = "RERR";	// Represents a RRER message type
-	public static final String DATA = "DATA";	// Represents normal data
-	public static final String UNINIT = "NA";	// Represents an uninitialized message type
-	public static final int NONE = -1;			// Used for default constructor values
-	
 	private String type;						// The type of this datagram
-	private int source;							// The source address of this datagram
-	private int destination;					// The destination address for this datagram
-	private int rreqID;							// The semi-unique id value (Math.Randint)
+	private int source;							// The source address
+	private int destination;					// The destination address
+	private int rreqID;							// The semi-unique id value
 	private Segment segment;					// The payload of this datagram
-	private List<Integer> path;					// A list of Node IDs that represents the path for this datagram
-	private List<Integer> batteryMetricValues;	// A list of battery metric values for storing new battery metrics that are encountered
-	private List<Integer> transmissionValues;	// A minimum transmission value or distance cost
+	private List<Integer> path;					// A path of Node IDs
+	private List<Integer> batteryMetricValues;	// A list of battery metric
+	private List<Integer> transmissionValues;	// A minimum transmission value
+	
+	public static final String RREQ = "RREQ";	// Represents a RREQ msg type
+	public static final String RREP = "RREP";	// Represents a RREP msg type
+	public static final String RERR = "RERR";	// Represents a RRER msg type
+	public static final String DATA = "DATA";	// Represents normal data
+	public static final String UNINIT = "NA";	// Represents an empty msg type
+	public static final int NONE = -1;			// Used for default constructors
 	
 	/**
 	 * Default constructor.
@@ -41,37 +41,42 @@ public class Datagram {
 	/**
 	 * Create a new datagram with type, source, and destination values.  Set
 	 * up objects.
-	 * @param pType
-	 * @param pSource
-	 * @param pDestination
+	 * 
+	 * @param pType The datagram type.
+	 * @param pSource The datagram's source.
+	 * @param pDestination The datagram's destination.
 	 */
 	public Datagram ( String pType, int pSource, int pDestination ) {
-		this ( pType, pSource, pDestination, new Segment(), new ArrayList<Integer>(), new ArrayList<Integer>());
+		this ( pType, pSource, pDestination, new Segment(),
+				new ArrayList<Integer>(), new ArrayList<Integer>());
 	}
 	
 	/**
 	 * Create a new datagram with type, source, destination and Segment values.
 	 * Set up objects.
 	 * 
-	 * @param pType
-	 * @param pSource
-	 * @param pDestination
-	 * @param pSegment
+	 * @param pType The datagram type.
+	 * @param pSource The datagram's source.
+	 * @param pDestination The datagram's destination.
+	 * @param pSegment The segment encapsulated by this datagram.
 	 */
 	public Datagram ( String pType, int pSource, int pDestination, Segment pSegment ) {
 		this ( pType, pSource, pDestination, pSegment, new ArrayList<Integer>(), new ArrayList<Integer>() );
 	}
 	
 	/**
+	 * Create a new datagram with all information needed.
 	 * 
-	 * @param pType
-	 * @param pSource
-	 * @param pDestination
-	 * @param pSegment
-	 * @param pPath
-	 * @param pBatteryMetricValues
+	 * @param pType The datagram type.
+	 * @param pSource The datagram's source.
+	 * @param pDestination The datagram's destination.
+	 * @param pSegment The segment encapsulated by this datagram.
+	 * @param pPath The datagram's path of travel.
+	 * @param pBatteryMetricValues Metrics encountered.
 	 */
-	public Datagram ( String pType, int pSource, int pDestination, Segment pSegment, List<Integer> pPath, List<Integer> pBatteryMetricValues ) {
+	public Datagram ( String pType, int pSource, int pDestination, 
+			Segment pSegment, List<Integer> pPath,
+			List<Integer> pBatteryMetricValues ) {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
@@ -87,12 +92,13 @@ public class Datagram {
 	 * 
 	 * @param pType The Datagram's type.
 	 * @param pSource The Datagram's source address.
-	 * @param pSegment The payload for this datagram.
 	 * @param pDestination The Datagram's destination address.
+	 * @param pSegment The payload for this datagram.
 	 * @param pPath The Datagram's specified path to follow.
 	 * @param pBatteryMetric The battery metric for this node.
 	 */
-	public Datagram( String pType, int pSource, int pDestination, Segment pSegment, List<Integer> pPath, int batteryMetric ) {
+	public Datagram( String pType, int pSource, int pDestination,
+			Segment pSegment, List<Integer> pPath, int batteryMetric ) {
 		type = pType;
 		source = pSource;
 		destination = pDestination;
@@ -125,9 +131,9 @@ public class Datagram {
 	}
 	
 	/**
-	 * Get the source field
+	 * Get the source field.
 	 *
-	 * @return The Source
+	 * @return The Source.
 	 */
 	public int getSource() {
 	
@@ -184,21 +190,29 @@ public class Datagram {
 		path = pPath;
 	}
 	
-	// Appends a node id for the path
+	/**
+	 * Appends a node id to this datagram's path.
+	 * 
+	 * @param pNodeID A node's id.
+	 */
 	public void addToPath( int pNodeID ) {
 		
 		path.add( pNodeID );
 	}
 	
 	/**
-	 * Set the segment 
+	 * Get the segment from this datagram.
+	 * 
+	 * @param The segment.
 	 */
 	public Segment getSegment() {
 		return segment;
 	}
 	
 	/**
-	 * Get the segment
+	 * Set the segment for this datagram.
+	 * 
+	 * @param pSegment A segment.
 	 */
 	public void setSegment( Segment pSegment ) {
 		segment = pSegment;
@@ -224,13 +238,17 @@ public class Datagram {
 		batteryMetricValues = pBatteryMetricValues;
 	}
 	
-	// Append a battery metric value
+	/**
+	 * Appends a battery metric to the metrics stored in this datagram.
+	 * 
+	 * @param pBatteryMetric A battery metric value to append.
+	 */
 	public void addBatteryMetricValue( int pBatteryMetric ) {
-		
 		batteryMetricValues.add( pBatteryMetric );
 	}
+	
 	/**
-	 * Clears the battery metrics
+	 * Clears the battery metrics list in this datagram.
 	 */
 	public void clearBatteryMetricValues(){
 		batteryMetricValues.clear();
@@ -239,10 +257,11 @@ public class Datagram {
 	/**
 	 * Takes a list and reverses the order of its elements.
 	 * 
-	 * @param incoming A list that needs to be reversed
-	 * @return A list in the reverse order of the incoming
+	 * @param incoming A list that needs to be reversed.
+	 * @return A list in the reverse order of the incoming.
 	 */
 	public static ArrayList<Integer> reverse( ArrayList<Integer> incoming ) {
+		
 		// obtain size of list
 		int size = incoming.size();
 		
@@ -256,33 +275,56 @@ public class Datagram {
     	/*for(int i : output) {
     		System.out.print(i + " ");
     	}
-    	System.out.println();
-    	System.out.println("reverse was run");
     	*/
+    	System.out.println("\nreverse was run");
+    	
     	return output;
 	}
 	
+	/**
+	 * Get the list of transmission values stored in this datagram.
+	 * 
+	 * @return The list of transmission values.
+	 */
 	public List<Integer> getTransmissionValues() {
 		return transmissionValues;
 	}
 	
-	public void setTransmissionValues( List<Integer> pValues ) {
+	/**
+	 * Set the list of transmission values for this datagram.
+	 * 
+	 * @param pTransmissionValues the list of transmission values.
+	 */
+	public void setTransmissionValues( List<Integer> pTransmissionValues ) {
 		
-		transmissionValues = pValues;
+		transmissionValues = pTransmissionValues;
 	}
 	
+	/**
+	 * Append a transmission value to the end of this datagram's transmission
+	 * values list.
+	 * 
+	 * @param pTransmissionValue A value to append.
+	 */
 	public void addTransmissionCost( int pTransmissionValue ) {
-		
 		transmissionValues.add( pTransmissionValue );
 	}
 	
+	/**
+	 * Get the RREQ ID associated with this Datagram if a RREQ type.
+	 * 
+	 * @return The RREQ ID.
+	 */
 	public int getRreqID() {
 		return rreqID;
 	}
 	
+	/**
+	 * Set the RREQ ID associated with this Datagram if a RREQ type.
+	 * 
+	 * @param pRreqID An associated RREQ ID.
+	 */
 	public void setRreqID( int pRreqID ) {
 		rreqID = pRreqID;
 	}
-	
-	public static void run() {}
 }

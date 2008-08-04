@@ -3,21 +3,23 @@ package energyaware;
 import java.util.List;
 
 /**
- * Responsible for next-hop transportation.
+ * 
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  *
+ * A frame is the encapsulation type used by the Datalink layer.  It is
+ * responsible for next-hop transportation.
  */
 public class Frame {
 
 	protected Datagram datagram;
-	protected int source;
-	protected int destination;
-	
-	public static final int BROADCASTFRAME = -1;
+	protected int source;			// Set by the encapsulated datagram
+	protected int destination;		// Set by the encapsulated datagram
+	private static final int BROADCASTFRAME = -1;
 	
 	/**
 	 * Default constructor.
-	 * @param pDatagram
+	 * 
+	 * @param pDatagram The datagram to be encapsulated.
 	 */
 	public Frame(Datagram pDatagram) {
 		setDatagram(pDatagram);
@@ -33,7 +35,8 @@ public class Frame {
 	
 	/**
 	 * Get the encapsulated datagram.
-	 * @return
+	 * 
+	 * @return The datagram
 	 */
 	public Datagram getDatagram() {
 		return datagram;
@@ -41,6 +44,7 @@ public class Frame {
 	
 	/**
 	 * Set the encapsulated datagram to the one specified.
+	 * 
 	 * @param pDatagram Datagram to encapsulate.
 	 */
 	public void setDatagram(Datagram pDatagram) {
@@ -50,6 +54,7 @@ public class Frame {
 	
 	/**
 	 * Get the source/sender's identification.
+	 * 
 	 * @return ID of the source of this frame.
 	 */
 	public int getSource() {
@@ -58,6 +63,7 @@ public class Frame {
 	
 	/**
 	 * Set the source/sender's identification.
+	 * 
 	 * @param pSource ID of the source for this frame.
 	 */
 	public void setSource(int pSource) {
@@ -67,6 +73,7 @@ public class Frame {
 	
 	/**
 	 * Get the intended next-hop destination of the frame.
+	 * 
 	 * @return Next-hop destination of the frame.
 	 */
 	public int getDestination() {
@@ -75,6 +82,7 @@ public class Frame {
 	
 	/**
 	 * Set the intended next-hop destination of the frame.
+	 * 
 	 * @param pDestination Next-hop destination of the frame.
 	 */
 	public void setDestination(int pDestination) {
@@ -85,21 +93,22 @@ public class Frame {
 	/**
 	 * Obtains the next-hop destination based upon the predetermined routing
 	 * path stored in the datagram.
-	 * @param source
-	 * @param path
-	 * @return
+	 * 
+	 * @param pSource A specified source
+	 * @param pPath A specified path
+	 * @return The next hop's node ID
 	 */
-	public static int getNextHopInPath(int source, List<Integer> path) {
-		int size = path.size();
+	public static int getNextHopInPath(int pSource, List<Integer> pPath) {
+		int size = pPath.size();
 		
 		// if the path is empty or null, escape early
-		if ( path == null || size == 0) {
+		if ( pPath == null || size == 0) {
 			return -1;
 		}
 		
 		int ourPosition = 0;
 		for (int i = 0; i < size; ++i) {
-			if ( path.get( i ) == ourPosition ) {
+			if ( pPath.get( i ) == ourPosition ) {
 				ourPosition = i;
 				break;
 			}
@@ -107,6 +116,6 @@ public class Frame {
 		
 		int nextHopPosition = ourPosition + 1;
 		
-		return path.get(nextHopPosition);
+		return pPath.get(nextHopPosition);
 	}
 }

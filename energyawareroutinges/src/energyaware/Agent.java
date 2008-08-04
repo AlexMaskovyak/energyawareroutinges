@@ -23,23 +23,18 @@ public class Agent{
 	private Rete engine;				// JESS side of communication protocol
 	private WorkingMemoryMarker marker;	// JESS usage
 	private Node node;					// A reference to our node
-//  private Database database;
-
-	public static final int NOTCONNECTED = 1000;
-	
 	private PathTable pathTable;
 	private Map<Integer, Integer> batteryMetrics;
 	private Map<NodePair, Integer> transmissionCosts;
 	private Map<Integer,Integer> rreqIDs;
-	
 	private Segment lastSegmentReceived;
+	public static final int NOTCONNECTED = 1000;
 	
 	/**
 	 * Default agent constructor.
 	 */
 	public Agent() {
 
-//		Database aDatabase
 		batteryMetrics = new HashMap<Integer,Integer>();
 		pathTable = new PathTable();
 		transmissionCosts = new HashMap<NodePair,Integer>();
@@ -55,18 +50,11 @@ public class Agent{
 			engine.batch("rules.clp");
 			engine.run();
 			
-			// Load the catalog data into working memory
-//			database = aDatabase;
-//			engine.addAll(database.getCatalogItems());
-
-			// Mark end of catalog data for later
-//			marker = engine.mark();
-			
-		} catch (JessException e) {
+		}
+		catch (JessException e) {
 			e.printStackTrace();
 		}
 	}
-
 	
 	/**
 	 * Allow our Java Agent & JESS object to send data via the Node
@@ -84,7 +72,6 @@ public class Agent{
 	public Rete getEngine() {
 		return engine;
 	}
-	
 	
 	/**
 	 * Obtain a segment from up in the transport layer.  This segment is to be
@@ -109,14 +96,14 @@ public class Agent{
 	}
 	
 	/**
-	 * Takes a segment and simulates the transport layer.  This layer's operations 
-	 * are simulated completely by this method.  It strips out the message from
-	 * the segment.
+	 * Takes a segment and simulates the transport layer.  This layer's
+	 * operations are simulated completely by this method.  It strips out the
+	 * message from the segment.
 	 * 
 	 * @param pSegment to the transport layer.
 	 */
 	public void sendMessage(Segment pSegment) {
-		this.lastSegmentReceived = pSegment;
+		lastSegmentReceived = pSegment;
 		
 		Message message = pSegment.getMessage();
 		node.receiveMessage(message);				// Pass message to the Node
@@ -158,9 +145,6 @@ public class Agent{
 			engine.add(pDatagram);
 			engine.run();
 		}
-//		for( Iterator it = engine.listDefglobals(); it.hasNext(); ) {
-//			System.out.println( it.next() );
-//		}
 		catch( JessException e ) {
 			e.printStackTrace();
 		}
@@ -205,7 +189,8 @@ public class Agent{
 	
 	/**
 	 * Obtain the node's battery metric.
-	 * @return
+	 * 
+	 * @return The battery metric.
 	 */
 	public int getBatteryMetric() {
 		
@@ -215,6 +200,7 @@ public class Agent{
 
 	/**
 	 * Obtain the battery metric for a given node.
+	 * 
 	 * @param pNodeID Node for which to obtain a battery metric.
 	 * @return Battery metric for the specified node.
 	 */
@@ -223,7 +209,8 @@ public class Agent{
 	}
 	
 	/**
-	 * Update the battery metric for a given node id. 
+	 * Update the battery metric for a given node id.
+	 * 
 	 * @param pNodeID Node ID for which to store the specified battery metric.
 	 * @param pMetricValue Battery metric value to associated with the Node ID.
 	 */
@@ -232,9 +219,10 @@ public class Agent{
 	}
 	
 	/**
-	 * Updates our Map of nodes to battery metrics.  
-	 * @param pNodeIDs
-	 * @param pMetricValues
+	 * Updates our Map of nodes to battery metrics. 
+	 *  
+	 * @param pNodeIDs The Node to update the metric for.
+	 * @param pMetricValues The node's metric.
 	 */
 	public void updateBatteryMetrics( 
 			ArrayList<Integer> pNodeIDs,
@@ -255,8 +243,6 @@ public class Agent{
 		}
 	}
 	
-	
-	
 	/**
 	 * Evaluates the best path to a given destination node.
 	 * 
@@ -265,7 +251,8 @@ public class Agent{
 	 */
 	public List<Integer> getBestPath( int pDestination ) {
 		
-		Iterator<ArrayList<Integer>> it = pathTable.getPathSet( pDestination ).paths.iterator();
+		Iterator<ArrayList<Integer>> it = pathTable.getPathSet(
+				pDestination ).paths.iterator();
 		List<Integer> bestPath = null, comparePath = null;	// Path options
 		int bestCost, compareCost;	// Keep track of the cost of each path
 		
@@ -309,7 +296,8 @@ public class Agent{
 				next = pIt.next();
 				
 				// Battery Metric * Transmission Cost
-				value += getBatteryMetrics(next) * getTransmissionCost( start, next);
+				value += getBatteryMetrics(next) * getTransmissionCost(
+						start, next);
 				start = next;
 			}
 		}
@@ -349,9 +337,10 @@ public class Agent{
 	
 	/**
 	 * Remove a RREQ ID from the list of IDs that we have already seen.
+	 * 
+	 * @param pID The RREQ ID to remove.
 	 */
 	public void removeRREQID( int pID ) {
-		
 		rreqIDs.remove(pID);
 	}
 	
@@ -373,8 +362,11 @@ public class Agent{
 	
 	/**
 	 * Add the provided path to the list of paths from a "source".
-	 * If the source is not us, then we have learned of paths from another node's
-	 * datagram while we were eavesdropping on other  
+	 * If the source is not us, then we have learned of paths from another
+	 * node's datagram while we were eavesdropping on other 
+	 * 
+	 * @param pPath The path to update.
+	 * @param pSource The source that was suppose to receive the path.
 	 */
 	public void updatePathTable( ArrayList<Integer> pPath, int pSource ) {
 		int us = getID();
@@ -458,7 +450,8 @@ public class Agent{
 					else {	// We assume a path to the intended source
 						newPath.add( us );
 						newPath.add( pSource );
-						pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
+						pathTable.addPath( (ArrayList<Integer>)
+								newPath.clone() );
 						break;
 					}
 				}
@@ -472,7 +465,7 @@ public class Agent{
 			
 			// Move iterator back to our ID in the list
 			while( it.hasPrevious() ) {
-				if( pSource == it.previous() ) {	// Are we the intended source?
+				if( pSource == it.previous() ) {// Are we the intended source?
 					if( pSource == us ) {
 						newPath.add(us);
 						break;
@@ -525,6 +518,7 @@ public class Agent{
 	/**
 	 * Determines whether we have any paths stored to reach the specified
 	 * destination.
+	 * 
 	 * @param pDestination
 	 * @return True if we have a path to the provided destination, false 
 	 * 			otherwise.
@@ -535,8 +529,9 @@ public class Agent{
 	
 	/**
 	 * Determine whether we currently have the path specified.
-	 * @param pPath
-	 * @return
+	 * 
+	 * @param pPath A path to compare against our current paths.
+	 * @return True if the path already exists.
 	 */
 	public boolean hasPath( ArrayList<Integer> pPath ) {
 		return pathTable.hasPath( pPath );
@@ -547,9 +542,10 @@ public class Agent{
 	 * of the first segment and at the beginning of the second segment are 
 	 * merged.  The first segment will have its trailing ID removed and then
 	 * have all elements of the second segment added to it.
-	 * @param pFirstSegment
-	 * @param pSecondSegment
-	 * @return
+	 * 
+	 * @param pFirstSegment The first path.
+	 * @param pSecondSegment The second path.
+	 * @return The merged path.
 	 */
 	public ArrayList<Integer> mergePathsInMiddle( 
 			ArrayList<Integer> pFirstSegment, 
@@ -565,6 +561,8 @@ public class Agent{
 	
 	/**
 	 * Allows access to an internal object.
+	 * 
+	 * @return The internal path table.
 	 */
 	public PathTable getPathTable() {
 		return pathTable;
@@ -573,6 +571,7 @@ public class Agent{
 	/**
 	 * Holds an association: destinations have a pathset of paths which can be
 	 * used to route on the network.
+	 * 
 	 * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
 	 */
 	private class PathTable {
