@@ -90,6 +90,10 @@ public class Frame {
 	 * @return
 	 */
 	public static int getNextHopInPath(int source, List<Integer> path) {
+		if ( path == null || path.size() == 0) {
+			return -1;
+		}
+		
 		int ourPosition = path.indexOf(source);
 		
 		int nextHopPosition = ourPosition + 1;
