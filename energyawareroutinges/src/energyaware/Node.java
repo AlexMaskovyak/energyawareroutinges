@@ -59,11 +59,18 @@ public class Node {
 	}
 	
 	/**
-	 * Set the agent to work at this node.
+	 * Set the agent to work at this node.  Also ensures that this agent has an
+	 * updated reference to this node.
 	 * @param pAgent An agent.
 	 */
 	public void setAgent( Agent pAgent ) {
 		agent = pAgent;
+		try {
+			agent.setNode( this );
+		}
+		catch ( JessException e ) {
+			
+		}
 	}
 	
 	
