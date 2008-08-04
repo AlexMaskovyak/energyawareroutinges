@@ -21,19 +21,14 @@ import jess.JessException;
  */
 public class Network {
 
-	public static final int maxTransmissionDistance = 10;
-	
-	
 	
 	private List<Node> nodes;
 	private List<Node> connectedNodes;
 	private Map <Node, Point> geography;
 	private int nodeCount = 0;
-	
 	private Random generator;
-	
-	// network is a singleton
-	private static Network network;
+	public static final int maxTransmissionDistance = 10;
+	private static Network network;		// Network is a Singleton
 	
 	
 	/**
@@ -64,6 +59,7 @@ public class Network {
 	 * Add a new node to the network.  This node will be placed at some random
 	 * point in the geography such that it is within transmitting distance of
 	 * at least one other Node.
+	 * 
 	 * @return A reference to the Node added.
 	 */
 	public Node addNode() {
@@ -75,6 +71,7 @@ public class Network {
 	 * Adds the specified node to the network.  This node will be placed at
 	 * some random point in the geography such that it is within transmitting
 	 * distance of at least one other Node.
+	 * 
 	 * @param pNode Node to add to the geography.
 	 * @return A reference to the Node added.
 	 */
@@ -87,6 +84,7 @@ public class Network {
 	 * point.  Note: nodes connected in this way are not guaranteed to be 
 	 * within communication distance of another node.  There are no guarantees
 	 * that the network is fully connected and reachable.
+	 * 
 	 * @param pNode Node to add to the geography.
 	 * @param pPoint Point at which to add the node.
 	 * @return The node added to the geography.
@@ -103,6 +101,7 @@ public class Network {
 	/**
 	 * Broadcasts the frame to all connected nodes within receiving distance
 	 * of the source broadcaster.
+	 * 
 	 * @param pSourceNode Node that is broadcasting on the network.
 	 * @param pFrame Frame to send to those within range.
 	 * @param pTransmissionDistance Distance that is reached by the strength of
@@ -187,7 +186,8 @@ public class Network {
 
 		// determine the offsets, the amount to branch out
 		xOffset = generator.nextInt() % maxTransmissionDistance;
-		yOffset = (int)Math.sqrt(Math.pow(maxTransmissionDistance, 2) - Math.pow(xOffset, 2));
+		yOffset = (int)Math.sqrt(Math.pow(maxTransmissionDistance, 2) -
+				Math.pow(xOffset, 2));
 		
 		// ensure that we use all quadrants, periodically modify our y
 		// offset to be negative and not always positive
@@ -204,6 +204,7 @@ public class Network {
 	 * Connects a node to the network topology, allowing it to both send and 
 	 * receive messages to other nodes.  If the node does not belong to the
 	 * geography, then it is added first.
+	 * 
 	 * @param pNode Node to connect to the topology.
 	 */
 	public void connect(Node pNode) {
@@ -220,7 +221,8 @@ public class Network {
 	 * sending or receiving messages from other nodes.  This will typically be
 	 * called when a node depletes its energy below the sending/receiving
 	 * threshold.
-	 * @param pNode
+	 * 
+	 * @param pNode Marks a node as no longer connected to the network.
 	 */
 	public void disconnect(Node pNode) {
 		connectedNodes.remove(pNode);
@@ -228,6 +230,7 @@ public class Network {
 	
 	/**
 	 * Physically removes the node from the geography.
+	 * 
 	 * @param pNode Node to remove.
 	 */
 	public void removeNode(Node pNode) {
@@ -257,6 +260,11 @@ public class Network {
 		pSourceNode.receiveFrame(frame, 0);
 	}
 	
+	/**
+	 * Begins the network simulator.
+	 * 
+	 * @param args Command line arguments.
+	 */
 	public static void main (String[] args) {
 		
 		Network network = Network.getInstance();

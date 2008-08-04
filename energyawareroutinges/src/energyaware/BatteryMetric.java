@@ -17,25 +17,20 @@ public class BatteryMetric {
 	 */
 	public static int calculateBatteryMetric( Battery pBattery ) {
 		
-		double level = pBattery.level;
-		double max = pBattery.capacity;
+		double ratio = pBattery.getLevel() / pBattery.getCapacity();
 		
-		if( level/max > .90 ) {
+		if( ratio > 0.90 ) {
+			return 1;	
+		}
+		else if( ratio > 0.70 ) {
 			
-			return 1;
-			
-		} else if( level/max > .70 ) {
-			
-			return 2;
-			
-		} else if( level/max > .50 ) {
-			
+			return 2;	
+		}
+		else if( ratio > 0.50 ) {	
 			return 3;
-			
-		} else if( level/max > .25 ) {
-			
+		}
+		else if( ratio > 0.25 ) {
 			return 4;
-			
 		}
 
 		return 5; // Returned if there is less than 25% left of the battery

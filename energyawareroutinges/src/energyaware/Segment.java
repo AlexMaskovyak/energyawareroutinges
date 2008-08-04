@@ -4,9 +4,9 @@ package energyaware;
  * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
  * @version July 2008
  * 
- * A segment is the data encapsulation used to hold a message and is exchanged between
- * the Transport and Network layers.  A Segment holds an applications "message" and a
- * specific destination.
+ * A segment is the data encapsulation used to hold a message and is exchanged
+ * between the Transport and Network layers.  A Segment holds an applications
+ * "message" and a specific destination node address.
  */
 public class Segment {
 	
@@ -74,6 +74,10 @@ public class Segment {
 		destination = pDestination;
 	}
 	
+	/**
+	 * Overrides the default equals method.
+	 */
+	@Override
 	public boolean equals( Object o ) {
 		if ( !(o instanceof Segment)) {
 			return false;

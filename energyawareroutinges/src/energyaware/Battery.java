@@ -8,8 +8,8 @@ package energyaware;
  */
 public class Battery {
 
-		public int level;		// The current level of the battery 
-		public int capacity;	// The full capabilities of the battery
+		private int level;		// The current level of the battery 
+		private int capacity;	// The full capabilities of the battery
 	
 		/**
 		 * Create a new battery object.
