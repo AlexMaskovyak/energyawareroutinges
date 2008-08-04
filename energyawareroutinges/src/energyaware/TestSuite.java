@@ -1320,15 +1320,7 @@ public class TestSuite {
 		else {
 			results.append( "FAILED\n" );
 		}
-		//if ( engine)
-		
-		
-//		Datagram dg = new Datagram("DATA",source,destination,message);
-		// Determine if the node made a Datagram
-		// make sure we have a datagram in there
-//		if ( engine.containsObject( dg ) ) {
-//			results.append( "UR1: Datagram inserted properly.\n" );
-//		}
+
 		
 		return results.toString();
 	}
@@ -1342,14 +1334,20 @@ public class TestSuite {
 		Node node = Node.getInstance( source );
 		Agent agent = node.getAgent();
 
-		ArrayList<Integer> newPath = new ArrayList<Integer>();
-		newPath.add( 1 );
-		newPath.add( 2 );
-		newPath.add( 3 );
-		newPath.add( destination );
-		
+		ArrayList<Integer> newPath = TestSuite.makeList( 1, 2, 3, 4);
 		agent.updatePathTable(newPath, source);
 		
+		
 		System.out.println( agent.getPathTable() );
+		
+		
+		
+		node = Node.getInstance( 7 );
+		agent = node.getAgent();
+		
+		agent.updatePathTable( newPath, source );
+		
+		System.out.println( agent.getPathTable() );
+		
 	}
 }

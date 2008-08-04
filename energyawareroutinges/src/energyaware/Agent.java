@@ -380,27 +380,32 @@ public class Agent{
 		int us = getID();
 		int ourIndex = Agent.getIndexOfID( us, pPath );
 		
+		// determines whether we should prepend our id in cases where
+		// we are eavesdropping, see below
+		boolean eavesdrop = false; 
+		
 		// we aren't a part of this path, we are eavesdropping.
-		// we can only be sure that the first part of the path worked
-		// so lets insert ourselves after the source of this path and cull the
-		// rest
-		//if( ourIndex == -1 ) {
-		//	int theirIndex = Agent.getIndexOfID( pSource, pPath );
-		//	pPath.
-		//}
-		
-		//System.out.println( "our index is: " + ourIndex );
-		
-		// escape!
-		if (ourIndex == -1) {
-			return;
+		// we know this if the index returned is out of bounds,
+		//
+		// this means that our new start point is actually from the
+		// source--we will manually prepend ourselves to the 
+		// head of the lists generated in this way
+		if( ourIndex == -1 ) {
+			System.out.println ( "Source is : " + pSource );
+			ourIndex = Agent.getIndexOfID( pSource, pPath );
+			eavesdrop = true;
 		}
 		
 		// create forward paths
 		
 		// add ourselves to the base list
-		ArrayList<Integer> newPath = new ArrayList<Integer>();
+		ArrayList<Integer> newPath = new ArrayList<Integer>();		
 		newPath.add( us );
+
+		// add the source if we are eavesdropping
+		if (eavesdrop) {
+			newPath.add( pSource );
+		}
 		
 		int size = pPath.size();
 		// iterate through all possible destinations
@@ -414,26 +419,23 @@ public class Agent{
 		
 		// reverse this list
 		pPath = Datagram.reverse( pPath );
-		ourIndex = Agent.getIndexOfID( us, pPath );
-		
-		System.out.println( "our index in reverse: " + ourIndex );
-		
-		
+		ourIndex = size - ourIndex - 1; //Agent.getIndexOfID( us, pPath );
 		
 		// add ourselves to the base list
-		newPath = new ArrayList<Integer>();
+		newPath = new ArrayList<Integer>();		
 		newPath.add( us );
-		
-		size = pPath.size();
+
+		// add the source if we are eavesdropping
+		if (eavesdrop) {
+			newPath.add( pSource );
+		}
+
 		// iterate through all possible destinations
 		for (int i = ourIndex + 1; i < size; ++i) {
 			newPath.add( pPath.get( i ) );
 			pathTable.addPath( newPath );
 			newPath = (ArrayList<Integer>)newPath.clone();
 		}
-		
-		
-		
 		
 		// We are either the beginning, somewhere in the middle or the end
 		/*if( pPath.size() > 1 ) { // At least two nodes needed to be a path
@@ -488,17 +490,15 @@ public class Agent{
 				pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
 			}
 		
-		}*/
-		
-		
-		
+		}*/	
 	}
 	
 	/**
-	 * 
-	 * @param pIndex
-	 * @param pPath
-	 * @return
+	 * Returns the index of the specified ID in the path.
+	 * @param pId ID whose index we are attempting to locate in the path
+	 * @param pPath Path which may or may not contain the ID.
+	 * @return The index of the ID in the path, -1 if the ID could not
+	 * 			be located.
 	 */
 	public static int getIndexOfID( int pId, List<Integer> pPath ) {
 		
@@ -509,7 +509,7 @@ public class Agent{
 			return -1;
 		}
 		
-		int ourPosition = 0;
+		int ourPosition = -1;
 		for (int i = 0; i < size; ++i) {
 			if ( pPath.get( i ) == pId ) {
 				ourPosition = i;
