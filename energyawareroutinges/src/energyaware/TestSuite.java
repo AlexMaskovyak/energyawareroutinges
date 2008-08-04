@@ -38,7 +38,7 @@ public class TestSuite {
 		System.out.printf( "TEST 15:\n%s\n%s\n%s \n", "-----", TestRuleSegment1(), "-----");
 		
 		
-		TestPathUpdate();	// ALEX THE UPDATE PATH WORKS!
+		System.out.printf( "TEST 16:\n%s\n%s\n%s \n", "-----", TestPathUpdate(), "-----");	// ALEX THE UPDATE PATH WORKS!
 		}
 		catch( Exception e ) {
 			e.printStackTrace();
@@ -68,17 +68,6 @@ public class TestSuite {
 		
 		results.append("TRI1: Agent assignment: ");
 		if( node1.getAgent() == ob ) {
-			results.append("PASSED\n");
-		}
-		else {
-			results.append("FAILED\n");
-		}
-		
-		val = context.getVariable("*id*");
-		ob = val.javaObjectValue(context);
-		
-		results.append("TRI1: ID assignment: ");
-		if( ((Integer) ob ).intValue() == 1 && ((Integer) ob).intValue() == node1.getID() ) {
 			results.append("PASSED\n");
 		}
 		else {
@@ -1324,26 +1313,96 @@ public class TestSuite {
 	/**
 	 * Test whether we update/add paths correctly. 
 	 */
-	public void TestPathUpdate() {
+	public String TestPathUpdate() {
+		StringBuilder results = new StringBuilder();
 		
 		int source = 2, destination = 4;
 		Node node = Node.getInstance( source );
 		Agent agent = node.getAgent();
 
-		ArrayList<Integer> newPath = TestSuite.makeList( 1, 2, 3, 4);
+		ArrayList<Integer> newPath = TestSuite.makeList( 1, 2, 3, 4 );
 		agent.updatePathTable(newPath, source);
 		
+		results.append( "PATHUPDATE: Test on node (id = 2) simulating storage of newly discovered path: (1, 2, 3, 4)\n");
 		
-		System.out.println( agent.getPathTable() );
+		results.append( "PATHUPDATE: Has forward path to destination [2, 3, 4]: ");
+		if ( agent.hasPath( TestSuite.makeList( 2, 3, 4))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "PATHUPDATE: Has forward path to midpoint [2, 3]: ");
+		if ( agent.hasPath( TestSuite.makeList( 2, 3 ))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+		
+		results.append( "PATHUPDATE: Has reverse path to start [2, 1]: ");
+		if ( agent.hasPath( TestSuite.makeList( 2, 1 ))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		// for our ours
+		results.append( "PATHUPDATE: View of pathtable: ");
+		results.append( agent.getPathTable() + "\n" );
 		
 		
-		
+		// test another node
 		node = Node.getInstance( 7 );
 		agent = node.getAgent();
-		
 		agent.updatePathTable( newPath, source );
+
 		
-		System.out.println( agent.getPathTable() );
+		results.append( "PATHUPDATE: Test on node (id = 7) simulating storage of newly eavesdropped path: (1, 2, 3, 4)\n");
 		
+		results.append( "PATHUPDATE: Has forward path to destination [7, 2, 3, 4]: ");
+		if ( agent.hasPath( TestSuite.makeList( 7, 2, 3, 4))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		results.append( "PATHUPDATE: Has forward path to midpoint [7, 2, 3]: ");
+		if ( agent.hasPath( TestSuite.makeList( 7, 2, 3 ))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		results.append( "PATHUPDATE: Has path to source of datagram [7, 2]: ");
+		if ( agent.hasPath( TestSuite.makeList( 7, 2 ))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		results.append( "PATHUPDATE: Has reverse path to start [7, 2, 1]: ");
+		if ( agent.hasPath( TestSuite.makeList( 7, 2, 1 ))) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
+
+		
+		
+		
+		results.append( "PATHUPDATE: View of pathtable: ");
+		results.append( agent.getPathTable() + "\n" );
+		
+		
+		return results.toString();
 	}
 }

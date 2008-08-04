@@ -425,9 +425,11 @@ public class Agent{
 		newPath = new ArrayList<Integer>();		
 		newPath.add( us );
 
-		// add the source if we are eavesdropping
+		// add the source if we are eavesdropping, additionally add this path
 		if (eavesdrop) {
 			newPath.add( pSource );
+			pathTable.addPath( newPath );
+			newPath = (ArrayList<Integer>)newPath.clone();
 		}
 
 		// iterate through all possible destinations
