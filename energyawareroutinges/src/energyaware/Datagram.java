@@ -242,7 +242,7 @@ public class Datagram {
 	 * @param incoming A list that needs to be reversed
 	 * @return A list in the reverse order of the incoming
 	 */
-	public static List<Integer> reverse( ArrayList<Integer> incoming ) {
+	public static ArrayList<Integer> reverse( ArrayList<Integer> incoming ) {
 		// obtain size of list
 		int size = incoming.size();
 		
@@ -253,12 +253,12 @@ public class Datagram {
     		output.add(i, incoming.get(size - 1 - i));
     	}
 
-    	for(int i : output) {
+    	/*for(int i : output) {
     		System.out.print(i + " ");
     	}
     	System.out.println();
     	System.out.println("reverse was run");
-    	
+    	*/
     	return output;
 	}
 	

@@ -72,8 +72,9 @@
 
 ; --- Universal Rule for Datagrams ---
 ; Universal Rule 1: Given any Datagram, we want to extract the battery metric, path & transmission cost
-(defrule ExtractTransmissionCost
+(defrule ExtractPathAndBatteryCost
     "Extracts the Battery Metric, Path & Transmission Cost from a datagram."
+    (declare (salience 100))
     (Datagram (path ?path) (batteryMetricValues ?metrics) (transmissionValues ?tValues))
     (test (> (?path size) 0))
     =>
@@ -180,9 +181,9 @@
 ;RREP Rule 1: RREP arrives in response to a RREQ that this node sense.
 (defrule RrepAtSource
     "RREP returns to original RREQer"
-    ?incoming <- (Datagram {type == "RREP"}{destination == ?*id*})
+    ?dg <- (Datagram {type == "RREP"}{destination == ?*id*})
     =>
-    (retract ?incoming)
+    (retract ?dg)
     (printout t "RREP received at Source" crlf)
     )
 
@@ -304,6 +305,7 @@
             ?*id*					; Our address
             ?dest					; Destination address
             ?outgoing ))			; Append our Battery Metric?
+    
     (retract ?seg)				; Remove the segment from our facts
     (printout t "Received segment" crlf)
     )

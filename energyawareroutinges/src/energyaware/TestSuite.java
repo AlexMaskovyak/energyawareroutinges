@@ -39,7 +39,6 @@ public class TestSuite {
 		System.out.printf( "TEST 14:\n%s\n%s\n%s \n", "-----", TestRuleOriginate2(), "-----");
 		System.out.printf( "TEST 15:\n%s\n%s\n%s \n", "-----", TestRuleSegment1(), "-----");
 		
-//		System.out.println( "TEST 3:\t" + TestRuleRREQ2() );
 		
 		TestPathUpdate();	// ALEX THE UPDATE PATH WORKS!
 		}
@@ -66,21 +65,18 @@ public class TestSuite {
 		Rete engine = node1.getAgent().getEngine();
 		Context context = engine.getGlobalContext();
 		
-		Defglobal dg = engine.findDefglobal("*agent*");
-		Value val = dg.getInitializationValue();
-		
+		Value val = context.getVariable("*agent*");
 		Object ob = val.javaObjectValue( context );
 		
 		results.append("TRI1: Agent assignment: ");
-		if( node1.getAgent() != ob ) {
+		if( node1.getAgent() == ob ) {
 			results.append("PASSED\n");
 		}
 		else {
 			results.append("FAILED\n");
 		}
 		
-		dg = engine.findDefglobal("*id*");
-		val = dg.getInitializationValue();
+		val = context.getVariable("*id*");
 		ob = val.javaObjectValue(context);
 		
 		results.append("TRI1: ID assignment: ");
@@ -663,12 +659,10 @@ public class TestSuite {
 		
 		ArrayList<Integer> batteryMetrics = 
 			TestSuite.makeList( destinationBattery, middleBattery, sourceBattery );
-		dg.setPath( batteryMetrics );
+		dg.setBatteryMetricValues( batteryMetrics );
 		
 		
 		agent.receiveDatagram( dg, 10 );
-		
-		
 		
 		
 		// ensure that it was removed
@@ -690,6 +684,8 @@ public class TestSuite {
 		else {
 			results.append( "FAILED\n" );
 		}
+		
+		System.out.println( "RREP1:" + agent.getPathTable() );
 		
 		return results.toString();
 	}
@@ -1129,7 +1125,7 @@ public class TestSuite {
 		}
 		
 		// check that battery metric was added
-		results.append( "RREQ3: Battery metrics cleared and current metric added: ");
+		results.append( "ORIGINATE1: Battery metrics cleared and current metric added: ");
 		ArrayList<Integer> revBatteryMetrics = TestSuite.makeList( agent.getBatteryMetric() );
 		if (datagramFromNode.getBatteryMetricValues().equals(revBatteryMetrics)) {
 			results.append( "PASSED\n" );
@@ -1310,7 +1306,20 @@ public class TestSuite {
 			results.append( "FAILED\n" );
 		}
 		
-		System.out.println( datagramFromEngine.getSegment().getMessage().information);
+		
+		// check to make sure this triggered the generate RREQ rule
+		// we'll just check to make sure there is a datagram of type RREQ
+		// and assume that if the RREQ tests in the previous method all 
+		// passed that they should do so here as well
+		Datagram datagramFromNode = node.getLastFrameSent().getDatagram();
+		results.append( "SEGMENT1: DATA triggers RREQ generation: ");
+		if ( datagramFromNode != null &&
+				datagramFromNode.getType().equals(Datagram.RREQ)) {
+			results.append( "PASSED\n" );
+		}
+		else {
+			results.append( "FAILED\n" );
+		}
 		//if ( engine)
 		
 		
@@ -1329,12 +1338,12 @@ public class TestSuite {
 	 */
 	public void TestPathUpdate() {
 		
-		int source = 1, destination = 4;
+		int source = 2, destination = 4;
 		Node node = Node.getInstance( source );
 		Agent agent = node.getAgent();
 
 		ArrayList<Integer> newPath = new ArrayList<Integer>();
-		newPath.add( source );
+		newPath.add( 1 );
 		newPath.add( 2 );
 		newPath.add( 3 );
 		newPath.add( destination );

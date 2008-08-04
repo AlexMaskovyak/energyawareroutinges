@@ -97,6 +97,7 @@ public class Agent{
 		
 		// encapsulate into segment for transport layer 
 		Segment segment = new Segment(pMessage, pDestinationNodeID);
+		lastSegmentReceived = segment;
 		
 		try {
 			engine.add(segment);	// Pass segment to JESS for processing
@@ -376,11 +377,66 @@ public class Agent{
 	 * datagram while we were eavesdropping on other  
 	 */
 	public void updatePathTable( ArrayList<Integer> pPath, int pSource ) {
+		int us = getID();
+		int ourIndex = Agent.getIndexOfID( us, pPath );
 		
-		int us = node.getID();
+		// we aren't a part of this path, we are eavesdropping.
+		// we can only be sure that the first part of the path worked
+		// so lets insert ourselves after the source of this path and cull the
+		// rest
+		//if( ourIndex == -1 ) {
+		//	int theirIndex = Agent.getIndexOfID( pSource, pPath );
+		//	pPath.
+		//}
+		
+		//System.out.println( "our index is: " + ourIndex );
+		
+		// escape!
+		if (ourIndex == -1) {
+			return;
+		}
+		
+		// create forward paths
+		
+		// add ourselves to the base list
+		ArrayList<Integer> newPath = new ArrayList<Integer>();
+		newPath.add( us );
+		
+		int size = pPath.size();
+		// iterate through all possible destinations
+		for (int i = ourIndex + 1; i < size; ++i) {
+			newPath.add( pPath.get( i ) );
+			pathTable.addPath( newPath );
+			newPath = (ArrayList<Integer>)newPath.clone();
+		}
+		
+		// create backward paths
+		
+		// reverse this list
+		pPath = Datagram.reverse( pPath );
+		ourIndex = Agent.getIndexOfID( us, pPath );
+		
+		System.out.println( "our index in reverse: " + ourIndex );
+		
+		
+		
+		// add ourselves to the base list
+		newPath = new ArrayList<Integer>();
+		newPath.add( us );
+		
+		size = pPath.size();
+		// iterate through all possible destinations
+		for (int i = ourIndex + 1; i < size; ++i) {
+			newPath.add( pPath.get( i ) );
+			pathTable.addPath( newPath );
+			newPath = (ArrayList<Integer>)newPath.clone();
+		}
+		
+		
+		
 		
 		// We are either the beginning, somewhere in the middle or the end
-		if( pPath.size() > 1 ) { // At least two nodes needed to be a path
+		/*if( pPath.size() > 1 ) { // At least two nodes needed to be a path
 			
 			// Find our position in the list
 			ListIterator<Integer> it = pPath.listIterator();
@@ -431,8 +487,37 @@ public class Agent{
 				newPath.add( it.previous() );
 				pathTable.addPath( (ArrayList<Integer>) newPath.clone() );
 			}
-			
+		
+		}*/
+		
+		
+		
+	}
+	
+	/**
+	 * 
+	 * @param pIndex
+	 * @param pPath
+	 * @return
+	 */
+	public static int getIndexOfID( int pId, List<Integer> pPath ) {
+		
+		int size = pPath.size();
+		
+		// if the path is empty or null, escape early
+		if ( pPath == null || size == 0) {
+			return -1;
 		}
+		
+		int ourPosition = 0;
+		for (int i = 0; i < size; ++i) {
+			if ( pPath.get( i ) == pId ) {
+				ourPosition = i;
+				break;
+			}
+		}
+		
+		return ourPosition;
 	}
 	
 	/**
