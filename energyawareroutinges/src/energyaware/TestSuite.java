@@ -1,9 +1,7 @@
 package energyaware;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import jess.*;
 
@@ -684,8 +682,6 @@ public class TestSuite {
 		else {
 			results.append( "FAILED\n" );
 		}
-		
-		System.out.println( "RREP1:" + agent.getPathTable() );
 		
 		return results.toString();
 	}

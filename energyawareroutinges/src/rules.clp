@@ -57,6 +57,17 @@
     (= (call Frame getNextHopInPath ?src ?path) ?*id*)
     )
 
+(deffunction sendDatagram (?datagram ?transmissionDistance)
+    "Wrapper to hide implementation of sending datagrams.  Sends the datagram to agent."
+    (?*agent* sendDatagram ?datagram ?transmissionDistance)
+    )
+
+(deffunction sendSegment (?segment) 
+    "Sends the segment up the stack to eventually hit user space"
+    (?*agent* sendMessage ?segment)
+    )
+
+
 ; --- List of all rules used by processing in JESS ---
 ; Initialization Rule 1
 (defrule setAgent
@@ -105,10 +116,9 @@
             	(getBatteryMetric)
             	))
 	(undefinstance ?incoming)
-    (?*agent* sendDatagram ?response 10)   
+    (sendDatagram ?response 10)
     (printout t "RREQ-RREP Fired" crlf))  
     
-
 ; RREQ Rule 2: Given a RREQ that has a RREQID that we've already seen before.
 (defrule NonNovelRREQID
     "We've received RREQ for which we are not the destination.  Its RREQ_ID is non-novel, meaning we've already been a part of this RREQ."
@@ -145,7 +155,7 @@
             	?revBestPath 
             	(getBatteryMetric)))
     (retract ?dg)
-    (?*agent* sendDatagram ?response 10)
+    (sendDatagram ?response 10)
     (printout t "Short circuited RREQ" crlf)
     )
 
@@ -171,7 +181,7 @@
             	?incoming.path
             	(?incoming getBatteryMetricValues)))
     (retract ?dg)
-    (?*agent* sendDatagram ?response 10)
+    (sendDatagram ?response 10)
     (printout t "Forward RREQ" crlf)
     )
 
@@ -203,7 +213,8 @@
             	?incoming.path
             	(?incoming getBatteryMetricValues)))
     (retract ?dg)
-    (?*agent* sendDatagram ?response 10)
+    (sendDatagram ?response 10)
+    (printout t "Forward received RREP" crlf)
 	)
 
 ; RREP Rule 3: RREP arrives where we are not along the route path, drop it.
@@ -213,6 +224,7 @@
     (not (test (isNextHopInPath ?src (?incoming getPath))))
     =>
     (retract ?dg)
+    (printout t "Drop RREP" crlf)
 	)
 
 
@@ -224,7 +236,7 @@
     ?incoming <- (Datagram {type == "DATA"}{destination == ?*id*} (segment ?segment))
     =>
     (retract ?incoming)
-    (?*agent* sendMessage ?segment)
+    (sendSegment ?segment)
     )
 
 ; Data Rule 2: Data arrives for someone where we are the next hop along the path
@@ -243,10 +255,9 @@
             	?incoming.path
             	(?incoming getBatteryMetricValues)))
     (undefinstance ?incoming)
-    (?*agent* sendDatagram ?response 10)
+    (sendDatagram ?response 10)
     (printout t "Forwarding Received Datagram" crlf)
     )
-
 
 ; Data Rule 3: Data arrives that is neither for us, nor for someone along a path involving us.
 (defrule DropDatagram
@@ -271,7 +282,7 @@
     (?outgoing setPath (getPath ?dest))
 	(bind ?response ?outgoing)
     (undefinstance ?outgoing)
-    (?*agent* sendDatagram ?response 10)    
+    (sendDatagram ?response 10)
     (printout t "Forward our datagram" crlf)
     )
 
@@ -289,9 +300,10 @@
             	))
     (?response addToPath ?*id*)
     (?response addBatteryMetricValue (getBatteryMetric))
-    (?*agent* sendDatagram ?response 10)    
+    (sendDatagram ?response 10)
     (printout t "Create RREQ for our datagram to send" crlf)
     )
+
 
 ; --- Responses to segments received from User/Node ---
 
