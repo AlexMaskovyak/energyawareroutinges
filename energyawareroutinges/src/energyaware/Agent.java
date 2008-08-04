@@ -32,6 +32,7 @@ public class Agent{
 	private Map<NodePair, Integer> transmissionCosts;
 	private Map<Integer,Integer> rreqIDs;
 	
+	private Segment lastSegmentReceived;
 	
 	/**
 	 * Default agent constructor.
@@ -114,6 +115,7 @@ public class Agent{
 	 * @param pSegment to the transport layer.
 	 */
 	public void sendMessage(Segment pSegment) {
+		this.lastSegmentReceived = pSegment;
 		
 		Message message = pSegment.getMessage();
 		node.receiveMessage(message);				// Pass message to the Node
@@ -164,6 +166,7 @@ public class Agent{
 	}
 	
 	
+	
 	/**
 	 * Yep you guessed it.  Get the ID
 	 * @return Take a guess
@@ -173,15 +176,24 @@ public class Agent{
 		return node.getID();
 	}
 	
+	/**
+	 * Agents cannot set the Node ID.
+	 * @param pId ID to ignore.
+	 */
+	public void setID( int pId ) {}
+	
+	
 	
 	/**
-	 * 
-	 * 
-	 * @param pId
+	 * Retrieves the last segment this agent received and forwarded up the 
+	 * stack to the Node/User space.
+	 * @return Last segment received/processed, null if no segment has yet been
+	 * 			received/processed.
 	 */
-	public void setID( int pId ) {
-		
+	public Segment getLastSegmentReceived() {
+		return lastSegmentReceived;
 	}
+	
 	
 	////
 	////

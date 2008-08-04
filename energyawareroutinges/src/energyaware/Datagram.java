@@ -58,12 +58,8 @@ public class Datagram {
 	 * @param pDestination
 	 * @param pSegment
 	 */
-	public Datagram ( String pType, int pSource, int pDestination,
-			Segment pSegment ) {
-		type = pType;
-		source = pSource;
-		destination = pDestination;
-		segment = pSegment;
+	public Datagram ( String pType, int pSource, int pDestination, Segment pSegment ) {
+		this ( pType, pSource, pDestination, pSegment, new ArrayList<Integer>(), new ArrayList<Integer>() );
 	}
 	
 	/**
