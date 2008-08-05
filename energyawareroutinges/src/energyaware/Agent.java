@@ -587,6 +587,7 @@ public class Agent{
 		
 		/**
 		 * Obtains a set of paths that end at a given destination.
+		 * 
 		 * @return PathSet of paths to a given destination.
 		 */
 		public PathSet getPathSet( int pDestination ) {
@@ -596,6 +597,7 @@ public class Agent{
 		/**
 		 * Determines whether we have a path to the specified destination 
 		 * available for use.
+		 * 
 		 * @param pDestination
 		 * @return True if we have a path capable of reaching the provided
 		 * 			destination, false otherwise.
@@ -628,6 +630,7 @@ public class Agent{
 		/**
 		 * Add an additional path to a set of paths associated with a given
 		 * destination node id.
+		 * 
 		 * @param pPath Path to a given destination, this path will be added to
 		 * 			the pathset for that destination.
 		 */
@@ -647,6 +650,7 @@ public class Agent{
 		
 		/**
 		 * Removes path to a destination device.
+		 * 
 		 * @param pPath Path to remove.
 		 */
 		public void removePath( ArrayList<Integer> pPath ) {
@@ -658,6 +662,9 @@ public class Agent{
 			}
 		}
 		
+		/**
+		 * Overrides the default tostring.
+		 */
 		public String toString() {
 			return pathSetMap.toString();
 		}
@@ -680,6 +687,7 @@ public class Agent{
 			
 			/**
 			 * Adds the arraylist as a path to our pathset.
+			 * 
 			 * @param pPath Path to add to this set.
 			 */
 			public void addPath( ArrayList<Integer> pPath ){
@@ -687,9 +695,10 @@ public class Agent{
 			}
 			
 			/**
+			 * Tests if a given path exists in the set of paths.
 			 * 
-			 * @param pPath
-			 * @return
+			 * @param pPath A path to test for.
+			 * @return True if the path exists.
 			 */
 			public boolean hasPath( ArrayList<Integer> pPath ) {
 				return paths.contains(pPath);
@@ -697,6 +706,7 @@ public class Agent{
 			
 			/**
 			 * Removes the specified arraylist path from our pathset.
+			 * 
 			 * @param pPath Path to remove from this set.
 			 */
 			public void removePath( ArrayList<Integer> pPath ) {
@@ -704,12 +714,9 @@ public class Agent{
 			}
 			
 			/**
-			 * Added for special purpose testing
-			 * 
-			 * @return The contents of Path Set
+			 * Overrides the default tostring.
 			 */
 			public String toString() {
-				
 				return paths.toString();
 			}
 		}
@@ -723,7 +730,10 @@ public class Agent{
 	////
 	
 	/**
+	 * Update the transmission cost associated with a node pair.
 	 * 
+	 * @param pNodePair The two nodes to associate.
+	 * @param pCost The cost associated.
 	 */
 	public void updateTransmissionCost( NodePair pNodePair, int pCost ) {
 		transmissionCosts.put( pNodePair, pCost );
@@ -731,8 +741,9 @@ public class Agent{
 	
 	/**
 	 * Update the transmission hop cost table.
-	 * @param pNodeIDs
-	 * @param pTransmissionCosts
+	 * 
+	 * @param pNodeIDs All nodes to update the transmission costs.
+	 * @param pTransmissionCosts The transmission costs.
 	 */
 	public void updateTransmissionCosts( 
 			ArrayList<Integer> pNodeIDs,
@@ -756,9 +767,11 @@ public class Agent{
 	}
 	
 	/**
+	 * Return the transmission cost associated with two nodes.
 	 * 
-	 * 
-	 * @return The transmission cost
+	 * @param pNodeA The first node.
+	 * @param pNodeB The other node.
+	 * @return The transmission cost between nodes.
 	 */
 	public int getTransmissionCost( int pNodeA, int pNodeB ) {
 		
@@ -770,11 +783,8 @@ public class Agent{
 		return tCost.intValue();
 	}
 	
-	
 	/**
 	 * Designed to aid in hop transmission cost storage.
-	 * @author Steve Baylor, Jeff Corcoran & Alex Maskovyak
-	 *
 	 */
 	private class NodePair {
 		
@@ -783,6 +793,7 @@ public class Agent{
 		
 		/**
 		 * Constructor.
+		 * 
 		 * @param pNodeA
 		 * @param pNodeB
 		 */
