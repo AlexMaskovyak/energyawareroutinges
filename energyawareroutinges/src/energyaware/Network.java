@@ -240,7 +240,8 @@ public class Network {
 		
 	/**
 	 * Models the datalink layer responsibility of sending a RERR datagram
-	 * to a source node when the datagram's next hop is not reachable.
+	 * to a source node when the datagram's next hop is not reachable.  This is
+	 * in lieu of a correct data-link acknowledgment protocol.
 	 * @param pSourceNode Source to receive this frame.
 	 * @param pFrame Frame with contact and path information.
 	 */
@@ -249,11 +250,11 @@ public class Network {
 		
 		Datagram RERRDatagram = 
 			new Datagram(
-				Datagram.UNINIT, 
+				Datagram.RERR, 
 				Datagram.NONE,
 				Datagram.NONE,
 				new Segment(),
-				pFrame.getDatagram().getPath(),
+				Datagram.reverse( (ArrayList<Integer>) pFrame.getDatagram().getPath() ),
 				Datagram.NONE);
 		Frame frame = new Frame(RERRDatagram);
 		

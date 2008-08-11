@@ -51,6 +51,11 @@
     (?*agent* hasPath ?destination)
     )
 
+(deffunction removePath (?path)
+    "Removes a nonfunctioning path from the path table."
+    (?*agent* removePath ?path)
+    )
+
 (deffunction isNovelRREQID (?rreqID)
     "Determine whether the rreq has been seen before."
     (?*agent* isNovelRREQID ?rreqID)
@@ -273,6 +278,27 @@
     )
 
 
+; --- Rules for Receiving RERR Types ---
+
+; RERR Rule 1: RERR indicates the path we attempted to use does not work.  We should remove this path.
+;(defrule RERRatDestination
+;    "Remove path when a RERR is received for that path."
+;    (Datagram {type == "RERR"} {destination == getID}(path ?path)(OBJECT ?incoming))
+;    =>
+;    (removePath ?path)
+;    (undefinstance ?incoming)
+;    (printout t "RERR received at destination and path removed." crlf)
+;    )
+
+; RERR Rule 2: RERR at a node other than the destination means we must remove the path and forward the datagram.
+;(defrule RERRalongPath
+;    "Remove path from our system and forward the RERR to destination."
+;    (Datagram {type == "RERR"} {destination != getID} (OBJECT ?incoming))
+;    =>
+;    (undefinstance ?incoming)
+;    (printout t "RERR received and forwarde" crlf)
+;    )
+
 ; --- Responses to datagrams that we create ---
 
 ; Originate Rule 1: Forward our datagram.
@@ -325,6 +351,6 @@
     (printout t "Received segment" crlf)
     )
 	; Do we have to do an append or update in order for the next rule to catch
-	; this Datagram without a path
+	; this Datagram without a pat
 
 ;(facts)
