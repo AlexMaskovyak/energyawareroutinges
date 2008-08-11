@@ -538,6 +538,15 @@ public class Agent{
 	}
 	
 	/**
+	 * Removes a path from our path table.  Typically, this will occur if the
+	 * path is invalid.
+	 * @param pPath Path to remove.
+	 */
+	public void removePath( ArrayList<Integer> pPath ) {
+		pathTable.removePath( pPath );
+	}
+	
+	/**
 	 * Merges two paths together so that shared nodes that appear at the end
 	 * of the first segment and at the beginning of the second segment are 
 	 * merged.  The first segment will have its trailing ID removed and then
